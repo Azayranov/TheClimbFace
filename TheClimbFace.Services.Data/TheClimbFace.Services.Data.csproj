@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../TheClimbFace.Data/TheClimbFace.Data.csproj" />
+    <ProjectReference Include="../TheClimbFace.Web.ViewModels/TheClimbFace.Web.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>

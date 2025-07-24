@@ -23,6 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="../TheClimbFace.Data.Models/TheClimbFace.Data.Models.csproj" />
     <ProjectReference Include="../TheClimbFace.Data/TheClimbFace.Data.csproj" />
+    <ProjectReference Include="../TheClimbFace.Services.Data/TheClimbFace.Services.Data.csproj" />
+    <ProjectReference Include="../TheClimbFace.Web.ViewModels/TheClimbFace.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

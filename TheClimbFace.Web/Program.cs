@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheClimbFace.Data;
 using TheClimbFace.Data.Models;
+using TheClimbFace.Data.Repository.Interfaces;
+using TheClimbFace.Services.Data;
+using TheClimbFace.Services.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,18 +37,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 // Register repositories for dependency injection
-/*
-
-*/
-
-
+builder.Services.AddScoped<IRepository<ClimbingCompetition>, BaseRepository<ClimbingCompetition>>();
 
 
 
 // Register application services
-/*
+builder.Services.AddScoped<IHomeService, HomeService>();
 
-*/
 
 // Configure cookie authentication settings
 /*

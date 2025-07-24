@@ -1,21 +1,19 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TheClimbFace.Models;
+using TheClimbFace.Services.Data.Interfaces;
+using TheClimbFace.Web.ViewModels.Home;
 
 namespace TheClimbFace.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IHomeService homeService, ILogger<HomeController> logger) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public async Task<IActionResult> Index()
     {
-        _logger = logger;
-    }
+        IEnumerable<HomeViewModel> activeCompetitions = await homeService.GetActiveCompetitionsAsync();
 
-    public IActionResult Index()
-    {
-        return View();
+        return View(activeCompetitions);
     }
 
     public IActionResult Privacy()

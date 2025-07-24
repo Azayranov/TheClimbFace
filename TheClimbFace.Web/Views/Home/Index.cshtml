@@ -1,8 +1,194 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Identity
+@using TheClimbFace.Web.ViewModels.Home
+@using TheClimbFace.Data.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@model IEnumerable<HomeViewModel>
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (SignInManager.IsSignedIn(User))
+{
+    <!-- Hero Section for Authenticated Users -->
+    <div class="hero-section text-center text-white position-relative mb-5">
+        <div class="hero-content">
+            <h1 class="display-3 fw-bold mb-4">Climbing Competitions Manager</h1>
+            <p class="lead mb-4">Organize and manage your climbing competitions with ease</p>
+            <a asp-controller="Competition" asp-action="Create" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle me-2"></i>Create Competition
+            </a>
+        </div>
+    </div>
+
+<!-- Features Section -->
+<div class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-trophy display-4"></i>
+                </div>
+                <h3>Competition Management</h3>
+                <p class="text-muted">Create and manage climbing competitions with an intuitive interface.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-people display-4"></i>
+                </div>
+                <h3>Climber Registration</h3>
+                <p class="text-muted">Easily manage participant registrations and group assignments.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-graph-up display-4"></i>
+                </div>
+                <h3>Real-time Scoring</h3>
+                <p class="text-muted">Track and update scores in real-time during the competition.</p>
+            </div>
+        </div>
+    </div>
 </div>
+}
+else
+{
+    <!-- Hero Section for Non-Authenticated Users -->
+    <div class="hero-section-small text-center text-white position-relative mb-5">
+        <div class="hero-content">
+            <h1 class="display-4 fw-bold mb-3">Active Competitions</h1>
+            <p class="lead">Find and follow ongoing climbing competitions</p>
+        </div>
+    </div>
+}
+
+<!-- Active Competitions Section - Shown for all users -->
+<div class="container mb-5">
+    <h2 class="text-center mb-4">Active Competitions</h2>
+    @if (Model.Any() == true)
+    {
+        <div class="row g-4">
+            @foreach (var competition in Model)
+            {
+                <div class="col-md-4">
+                    <div class="competition-card">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title h4 mb-3">@competition.Name</h3>
+                                <p class="text-muted mb-3">
+                                    <i class="bi bi-calendar-event me-2"></i>
+                                    @competition.StartDate.ToString("dd.MM.yyyy") - @competition.EndDate.ToString("dd.MM.yyyy")
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="bi bi-person me-2"></i>
+                                    @competition.Organizer
+                                </p>
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@competition.Id"
+                                    class="btn btn-outline-primary w-100">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!SignInManager.IsSignedIn(User))
+        {
+            <div class="text-center mt-5">
+                <p class="lead mb-4">Want to organize your own competition?</p>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
+                    <i class="bi bi-trophy me-2"></i>Create Competition
+                </a>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x display-1 text-muted mb-3"></i>
+            <h2>No Active Competitions</h2>
+            <p class="text-muted mb-4">There are currently no active climbing competitions.</p>
+            @if (!SignInManager.IsSignedIn(User))
+            {
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">
+                    <i class="bi bi-trophy me-2"></i>Create Competition
+                </a>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+            url('/images/climbing-hero.jpg') center/cover no-repeat;
+        padding: 120px 20px;
+        margin-top: -1rem;
+        margin-bottom: 3rem;
+    }
+
+    .hero-section-small {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+            url('/images/climbing-hero.jpg') center/cover no-repeat;
+        padding: 60px 20px;
+        margin-top: -1rem;
+        margin-bottom: 3rem;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        height: 100%;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .feature-icon {
+        color: #0d6efd;
+    }
+
+    .competition-card {
+        transition: transform 0.3s ease;
+    }
+
+    .competition-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    }
+
+    .btn-outline-primary:hover {
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    }
+
+    .btn-outline-light {
+        border-width: 2px;
+    }
+
+    .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #000;
+    }
+</style>
