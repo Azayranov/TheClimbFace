@@ -9,6 +9,7 @@ namespace TheClimbFace.Controllers;
 
 public class HomeController(IHomeService homeService, ILogger<HomeController> logger) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         IEnumerable<HomeViewModel> activeCompetitions = await homeService.GetActiveCompetitionsAsync();
@@ -16,6 +17,7 @@ public class HomeController(IHomeService homeService, ILogger<HomeController> lo
         return View(activeCompetitions);
     }
 
+    [HttpGet]
     public IActionResult Privacy()
     {
         return View();

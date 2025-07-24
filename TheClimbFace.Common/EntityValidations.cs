@@ -23,5 +23,8 @@ public static class EntityValidations
         public const int OrganiserMaxLength = 100;
         public const int InfoMinLength = 3;
         public const int InfoMaxLength = 2000;
+
+        public const int TypeMinLength = 4;
+        public const int TypeMaxLength = 7;
     }
 }

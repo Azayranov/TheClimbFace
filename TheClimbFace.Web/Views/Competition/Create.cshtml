@@ -1,0 +1,204 @@
+﻿@using TheClimbFace.Web.ViewModels.Competition
+@model CreateCompetitionInputModel
+@using TheClimbFace.Data.Models.Enums;
+@{
+    ViewData["Title"] = "Create Competition";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">Create New Competition</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Organizer" class="form-label"></label>
+                            <input asp-for="Organizer" class="form-control" />
+                            <span asp-validation-for="Organizer" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Type" class="form-label">Type</label>
+                            <select asp-for="Type" asp-items="Html.GetEnumSelectList<CompetitionType>()"
+                                class="form-control"></select>
+                            <span asp-validation-for="Type" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Start Date</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <!-- Dropdown for Day -->
+                                <select class="form-control form-control-sm" id="StartDay" name="StartDay"
+                                    style="width: auto;">
+                                    <option value="">Day</option>
+                                    @for (int day = 1; day <= 31; day++)
+                                    {
+                                        <option value="@day">@day</option>
+                                    }
+                                </select>
+
+                                <!-- Dropdown for Month -->
+                                <select class="form-control form-control-sm" id="StartMonth" name="StartMonth"
+                                    style="width: auto;" onchange="updateStartDays()">
+                                    <option value="">Month</option>
+                                    @foreach (var month in
+                                                                        System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.Where(m =>
+                                                                        !string.IsNullOrEmpty(m)))
+                                    {
+                                        <option value="@month">@month</option>
+                                    }
+                                </select>
+
+                                <!-- Dropdown for Year -->
+                                <select class="form-control form-control-sm" id="StartYear" name="StartYear"
+                                    style="width: auto;" onchange="updateStartDays()">
+                                    <option value="">Year</option>
+                                    @for (int year = DateTime.Now.Year; year <= DateTime.Now.Year + 5; year++)
+                                    {
+                                        <option value="@year">@year</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="StartDay" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">End Date</label>
+                            <div class="d-flex gap-2 align-items-center">
+                                <!-- Dropdown for Day -->
+                                <select class="form-control form-control-sm" id="EndDay" name="EndDay"
+                                    style="width: auto;">
+                                    <option value="">Day</option>
+                                    @for (int day = 1; day <= 31; day++)
+                                    {
+                                        <option value="@day">@day</option>
+                                    }
+                                </select>
+
+                                <!-- Dropdown for Month -->
+                                <select class="form-control form-control-sm" id="EndMonth" name="EndMonth"
+                                    style="width: auto;" onchange="updateEndDays()">
+                                    <option value="">Month</option>
+                                    @foreach (var month in
+                                                                        System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.Where(m =>
+                                                                        !string.IsNullOrEmpty(m)))
+                                    {
+                                        <option value="@month">@month</option>
+                                    }
+                                </select>
+
+                                <!-- Dropdown for Year -->
+                                <select class="form-control form-control-sm" id="EndYear" name="EndYear"
+                                    style="width: auto;" onchange="updateEndDays()">
+                                    <option value="">Year</option>
+                                    @for (int year = DateTime.Now.Year; year <= DateTime.Now.Year + 5; year++)
+                                    {
+                                        <option value="@year">@year</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="EndDay" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Information" class="form-label"></label>
+                            <textarea asp-for="Information" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Information" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Create Competition</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateStartDays() {
+            const daySelect = document.getElementById("StartDay");
+            const monthSelect = document.getElementById("StartMonth");
+            const yearSelect = document.getElementById("StartYear");
+
+            const month = monthSelect.selectedIndex;
+            const year = parseInt(yearSelect.value) || new Date().getFullYear();
+
+            // Запазване на текущо избрания ден
+            const selectedDay = parseInt(daySelect.value);
+
+            // Изчисляване на броя дни в избрания месец и година
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // Изчистване на съществуващите опции
+            daySelect.innerHTML = '<option value="">Day</option>';
+
+            // Добавяне на правилния брой дни
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.textContent = day;
+
+                // Задаване на избрания ден, ако е валиден
+                if (day === selectedDay) {
+                    option.selected = true;
+                }
+
+                daySelect.appendChild(option);
+            }
+        }
+
+        function updateEndDays() {
+            const daySelect = document.getElementById("EndDay");
+            const monthSelect = document.getElementById("EndMonth");
+            const yearSelect = document.getElementById("EndYear");
+
+            const month = monthSelect.selectedIndex;
+            const year = parseInt(yearSelect.value) || new Date().getFullYear();
+
+            // Запазване на текущо избрания ден
+            const selectedDay = parseInt(daySelect.value);
+
+            // Изчисляване на броя дни в избрания месец и година
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // Изчистване на съществуващите опции
+            daySelect.innerHTML = '<option value="">Day</option>';
+
+            // Добавяне на правилния брой дни
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.textContent = day;
+
+                // Задаване на избрания ден, ако е валиден
+                if (day === selectedDay) {
+                    option.selected = true;
+                }
+
+                daySelect.appendChild(option);
+            }
+        }
+
+        // Инициализиране на дните при зареждане на страницата
+        document.addEventListener('DOMContentLoaded', function () {
+            updateStartDays();
+            updateEndDays();
+        });
+    </script>
+}
