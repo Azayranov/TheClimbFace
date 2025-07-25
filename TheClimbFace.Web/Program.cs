@@ -38,6 +38,7 @@ builder.Services.AddRazorPages();
 
 // Register repositories for dependency injection
 builder.Services.AddScoped<IRepository<ClimbingCompetition>, BaseRepository<ClimbingCompetition>>();
+builder.Services.AddScoped<IRepository<Boulder>, BaseRepository<Boulder>>();
 
 
 

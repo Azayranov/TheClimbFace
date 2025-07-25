@@ -1,0 +1,252 @@
+﻿@using TheClimbFace.Web.ViewModels.Competition
+@model CreateCompetitionInputModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Edit Competition</h3>
+                <button class="btn btn-light" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Name" class="form-label">Competition Name</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Organizer" class="form-label">Organizer</label>
+                            <input asp-for="Organizer" class="form-control" />
+                            <span asp-validation-for="Organizer" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Start Date</label>
+                        <div class="d-flex gap-2 align-items-center">
+                            <select class="form-control form-control-sm" id="StartDay" name="StartDay" style="width: auto;">
+                                <option value="">Day</option>
+                                @for (int day = 1; day <= 31; day++)
+                                {
+                                    <option value="@day" selected="@(Model.StartDay == day)">@day</option>
+                                }
+                            </select>
+
+                            <select class="form-control form-control-sm" id="StartMonth" name="StartMonth" style="width: auto;" onchange="updateStartDays()">
+                                <option value="">Month</option>
+                                @foreach (var month in System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
+                                {
+                                    <option value="@month" selected="@(Model.StartMonth == month)">@month</option>
+                                }
+                            </select>
+
+                            <select class="form-control form-control-sm" id="StartYear" name="StartYear" style="width: auto;" onchange="updateStartDays()">
+                                <option value="">Year</option>
+                                @{
+                                    int currentYear = DateTime.Now.Year;
+                                    for (int year = currentYear; year <= currentYear + 5; year++)
+                                    {
+                                        <option value="@year" selected="@(Model.StartYear == year)">@year</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span asp-validation-for="StartDay" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">End Date</label>
+                        <div class="d-flex gap-2 align-items-center">
+                            <select class="form-control form-control-sm" id="EndDay" name="EndDay" style="width: auto;">
+                                <option value="">Day</option>
+                                @for (int day = 1; day <= 31; day++)
+                                {
+                                    <option value="@day" selected="@(Model.EndDay == day)">@day</option>
+                                }
+                            </select>
+
+                            <select class="form-control form-control-sm" id="EndMonth" name="EndMonth" style="width: auto;" onchange="updateEndDays()">
+                                <option value="">Month</option>
+                                @foreach (var month in System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames.Where(m => !string.IsNullOrEmpty(m)))
+                                {
+                                    <option value="@month" selected="@(Model.EndMonth == month)">@month</option>
+                                }
+                            </select>
+
+                            <select class="form-control form-control-sm" id="EndYear" name="EndYear" style="width: auto;" onchange="updateEndDays()">
+                                <option value="">Year</option>
+                                @{
+                                    for (int year = currentYear; year <= currentYear + 5; year++)
+                                    {
+                                        <option value="@year" selected="@(Model.EndYear == year)">@year</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <span asp-validation-for="EndDay" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="RouteCount" class="form-label">Number of Boulders</label>
+                            <div class="input-group">
+                                <input asp-for="RouteCount" class="form-control" type="number" min="0" />
+                                <span class="input-group-text">
+                                    <i class="fas fa-mountain"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="RouteCount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="Information" class="form-label">Additional Information</label>
+                            <textarea asp-for="Information" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Information" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a asp-action="Details" asp-route-id="@ViewContext.RouteData.Values["id"]" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="fas fa-trash"></i> Delete Competition
+                    </button>
+                    <a asp-action="Start" asp-route-idCompetition="@ViewContext.RouteData.Values["id"]" class="btn btn-success">
+                        <i class="fas fa-play"></i> Start Competition
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this competition? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid rgba(0,0,0,0.1);
+        padding: 0.625rem 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+    }
+
+    .btn {
+        border-radius: 8px;
+        padding: 0.625rem 1.25rem;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function updateStartDays() {
+            const daySelect = document.getElementById("StartDay");
+            const monthSelect = document.getElementById("StartMonth");
+            const yearSelect = document.getElementById("StartYear");
+
+            const month = monthSelect.selectedIndex;
+            const year = parseInt(yearSelect.value) || new Date().getFullYear();
+
+            const selectedDay = parseInt(daySelect.value);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            daySelect.innerHTML = '<option value="">Day</option>';
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.textContent = day;
+                if (day === selectedDay && day <= daysInMonth) {
+                    option.selected = true;
+                }
+                daySelect.appendChild(option);
+            }
+        }
+
+        function updateEndDays() {
+            const daySelect = document.getElementById("EndDay");
+            const monthSelect = document.getElementById("EndMonth");
+            const yearSelect = document.getElementById("EndYear");
+
+            const month = monthSelect.selectedIndex;
+            const year = parseInt(yearSelect.value) || new Date().getFullYear();
+
+            const selectedDay = parseInt(daySelect.value);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            daySelect.innerHTML = '<option value="">Day</option>';
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement("option");
+                option.value = day;
+                option.textContent = day;
+                if (day === selectedDay && day <= daysInMonth) {
+                    option.selected = true;
+                }
+                daySelect.appendChild(option);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStartDays();
+            updateEndDays();
+        });
+    </script>
+}

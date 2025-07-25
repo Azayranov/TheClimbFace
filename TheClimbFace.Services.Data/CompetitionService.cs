@@ -7,8 +7,23 @@ using TheClimbFace.Web.ViewModels.Competition;
 
 namespace TheClimbFace.Services.Data;
 
-public class CompetitionService(IRepository<ClimbingCompetition> competitionRepository) : ICompetitionService
+public class CompetitionService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Boulder> boulderRepository) : ICompetitionService
 {
+    public async Task AddCompetitionBouldersAsync(ClimbingCompetition competition)
+    {
+        await boulderRepository.DeleteRangeAsync(competition.Boulders.ToList());
+
+        for (int i = 0; i < competition.RouteCount; i++)
+        {
+            Boulder boulder = new Boulder()
+            {
+                BoulderNumber = i + 1,
+            };
+
+            competition.Boulders.Add(boulder);
+        }
+    }
+
     public async Task CreateCompetitionAsync(CreateCompetitionInputModel model, DateTime StartDate, DateTime EndDate, Guid userId)
     {
         var competition = model.ToClimbingCompetition(StartDate, EndDate);
@@ -16,7 +31,60 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
         await competitionRepository.AddAsync(competition);
     }
 
-public async Task<DetailsViewModel> GetCompetitionDetailsAsync(Guid competitionId)
+
+    public async Task EditCompetitionAsync(CreateCompetitionInputModel model, DateTime startDate, DateTime endDate, Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(b => b.Boulders)
+            .FirstOrDefaultAsync();
+
+        bool isBoulderCountChanged = competition!.RouteCount != model.RouteCount;
+
+        competition.Name = model.Name;
+        competition.Organizer = model.Organizer;
+        competition.Information = model.Information;
+        competition.StartDate = startDate;
+        competition.EndDate = endDate;
+        competition.RouteCount = model.RouteCount;
+
+        if (isBoulderCountChanged)
+        {
+            if (competition.RouteCount > 0)
+                await AddCompetitionBouldersAsync(competition);
+            else
+                await boulderRepository.DeleteRangeAsync(competition.Boulders.ToList());
+        }
+
+        await competitionRepository.SaveChangesAsync();
+    }
+
+
+    public async Task<CreateCompetitionInputModel> GetCompetitionAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository.GetByIdAsync(competitionId);
+
+        CreateCompetitionInputModel model = new()
+        {
+            Name = competition.Name,
+            Organizer = competition.Organizer,
+            Information = competition.Information,
+            StartDay = competition.StartDate.Day,
+            StartMonth = competition.StartDate.ToString("MMMM"),
+            StartYear = competition.StartDate.Year,
+            EndDay = competition.EndDate.Day,
+            EndMonth = competition.EndDate.ToString("MMMM"),
+            EndYear = competition.EndDate.Year,
+            RouteCount = competition.RouteCount
+        };
+
+        return model;
+
+    }
+
+
+    public async Task<DetailsViewModel> GetCompetitionDetailsAsync(Guid competitionId)
     {
         ClimbingCompetition? competition = await competitionRepository
             .GetAllAttached()
