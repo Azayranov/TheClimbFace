@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TheClimbFace.Data.Models.Enums;
 using static TheClimbFace.Common.EntityValidations.ClimbingCompetition;
 
@@ -41,6 +42,11 @@ public class ClimbingCompetition
 
     public bool IsDeleted { get; set; } = false;
     public bool HasPassed { get; set; } = false;
+
+    public Guid ApplicationUserId { get; set; }
+
+    [ForeignKey(nameof(ApplicationUserId))]
+    public ApplicationUser ApplicationUser { get; set; } = null!;
 
     //
 
