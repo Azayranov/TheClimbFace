@@ -13,5 +13,7 @@ public interface IRepository<T> where T : class
     Task<bool> DeleteAsync(Guid id);
     Task<bool> DeleteAsync(T entity);
     Task<bool> DeleteRangeAsync(IEnumerable<T> entities);
+    Task SaveChangesAsync();
+
 
 }

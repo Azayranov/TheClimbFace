@@ -76,6 +76,11 @@ public class BaseRepository<T> : IRepository<T> where T : class
         return await dbSet.FindAsync(id);
     }
 
+    public async Task SaveChangesAsync()
+    {
+        await context.SaveChangesAsync();
+    }
+
     public async Task UpdateAsync(T entity)
     {
         dbSet.Attach(entity);
