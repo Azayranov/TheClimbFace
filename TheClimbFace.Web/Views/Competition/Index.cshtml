@@ -1,0 +1,251 @@
+﻿@using TheClimbFace.Web.ViewModels.Competition
+@model CompetitionListViewModel
+
+<div class="container mt-4">
+    <!-- My Competitions Section -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary">My Competitions</h2>
+            <form asp-action="Create" method="get">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Competition
+                </button>
+            </form>
+        </div>
+
+        @if ((Model.ActiveCompetitions == null || !Model.ActiveCompetitions.Any()) && 
+             (Model.InactiveCompetitions == null || !Model.InactiveCompetitions.Any()))
+        {
+            <div class="alert alert-info text-center p-5">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <p class="mb-0">You haven't created any competitions yet. Create your first competition to get started!</p>
+            </div>
+        }
+        else
+        {
+            <!-- Active Competitions -->
+            <div class="mb-5">
+                <h3 class="text-success mb-4">
+                    <i class="fas fa-play-circle"></i> Active Competitions
+                </h3>
+                @if (!Model.ActiveCompetitions.Any())
+                {
+                    <div class="alert alert-light text-center">
+                        <p class="mb-0">No active competitions found.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        @foreach (var competition in Model.ActiveCompetitions)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm hover-shadow border-success">
+                                    <div class="card-header bg-success bg-opacity-10 border-success">
+                                        <span class="badge bg-success">Active</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary">@(competition?.Name ?? "N/A")</h5>
+                                        <div class="card-text">
+                                            <p class="mb-2">
+                                                <i class="fas fa-user-tie text-muted"></i>
+                                                <span class="ms-2">@(competition?.Organizer ?? "N/A")</span>
+                                            </p>
+                                            <p class="mb-3">
+                                                <i class="far fa-calendar-alt text-muted"></i>
+                                                <span class="ms-2">
+                                                    @if (competition?.StartDate != null && competition?.EndDate != null)
+                                                    {
+                                                        @competition.StartDate.ToString("dd.MM.yyyy") <span class="text-muted">to</span> @competition.EndDate.ToString("dd.MM.yyyy")
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">Dates not set</span>
+                                                    }
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <form asp-action="Details" asp-route-id="@competition?.Id" method="get">
+                                            <button type="submit" class="btn btn-outline-success w-100">
+                                                <i class="fas fa-external-link-alt"></i> View Details
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Inactive Competitions -->
+            <div>
+                <h3 class="text-secondary mb-4">
+                    <i class="fas fa-pause-circle"></i> Inactive Competitions
+                </h3>
+                @if (!Model.InactiveCompetitions.Any())
+                {
+                    <div class="alert alert-light text-center">
+                        <p class="mb-0">No inactive competitions found.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        @foreach (var competition in Model.InactiveCompetitions)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm hover-shadow">
+                                    <div class="card-header bg-secondary bg-opacity-10">
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary">@(competition?.Name ?? "N/A")</h5>
+                                        <div class="card-text">
+                                            <p class="mb-2">
+                                                <i class="fas fa-user-tie text-muted"></i>
+                                                <span class="ms-2">@(competition?.Organizer ?? "N/A")</span>
+                                            </p>
+                                            <p class="mb-3">
+                                                <i class="far fa-calendar-alt text-muted"></i>
+                                                <span class="ms-2">
+                                                    @if (competition?.StartDate != null && competition?.EndDate != null)
+                                                    {
+                                                        @competition.StartDate.ToString("dd.MM.yyyy") <span class="text-muted">to</span> @competition.EndDate.ToString("dd.MM.yyyy")
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">Dates not set</span>
+                                                    }
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0">
+                                        <form asp-action="Details" asp-route-id="@competition?.Id" method="get">
+                                            <button type="submit" class="btn btn-outline-secondary w-100">
+                                                <i class="fas fa-external-link-alt"></i> View Details
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Assigned Competitions (as Arbitrator) -->
+    <div class="mt-5">
+        <h3 class="text-primary mb-4">
+            <i class="fas fa-gavel"></i> Assigned Competitions
+        </h3>
+        @if (!Model.ArbitratorCompetitions.Any())
+        {
+            <div class="alert alert-light text-center">
+                <p class="mb-0">You are not assigned as an arbitrator to any competitions.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @foreach (var competition in Model.ArbitratorCompetitions)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm hover-shadow @(competition.IsActive ? "border-info" : "")">
+                            <div class="card-header @(competition.IsActive ? "bg-info bg-opacity-10" : "bg-secondary bg-opacity-10")">
+                                @if (competition.IsActive)
+                                {
+                                    <span class="badge bg-info">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                                <span class="ms-2 badge bg-primary">Boulder @competition.AssignedBoulderNumber</span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">@competition.Name</h5>
+                                <div class="card-text">
+                                    <p class="mb-2">
+                                        <i class="fas fa-user-tie text-muted"></i>
+                                        <span class="ms-2">@competition.Organizer</span>
+                                    </p>
+                                    <p class="mb-3">
+                                        <i class="far fa-calendar-alt text-muted"></i>
+                                        <span class="ms-2">
+                                            @competition.StartDate.ToString("dd.MM.yyyy") 
+                                            <span class="text-muted">to</span> 
+                                            @competition.EndDate.ToString("dd.MM.yyyy")
+                                        </span>
+                                    </p>
+                                    @if (competition.IsActive)
+                                    {
+                                        <p class="mb-0">
+                                            <i class="fas fa-clipboard-list text-info"></i>
+                                            <span class="ms-2 text-info">Ready for scoring</span>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0">
+                                @if (competition.IsActive)
+                                {
+                                    <a asp-controller="Arbitrator" asp-action="Score" 
+                                       asp-route-id="@competition.Id"
+                                       asp-route-boulderNumber="@competition.AssignedBoulderNumber"
+                                       class="btn btn-info w-100">
+                                        <i class="fas fa-clipboard-check"></i> Score Boulder
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Arbitrator" asp-action="Results" asp-route-id="@competition.Id" 
+                                       class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-chart-bar"></i> View Results
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .card {
+        border-radius: 10px;
+        border: none;
+    }
+    
+    .btn {
+        border-radius: 6px;
+    }
+    
+    .alert {
+        border-radius: 10px;
+    }
+
+    .card-header {
+        border-top-left-radius: 10px !important;
+        border-top-right-radius: 10px !important;
+    }
+</style>
+
+@section Scripts {
+}

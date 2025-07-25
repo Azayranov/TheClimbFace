@@ -1,0 +1,233 @@
+﻿@using TheClimbFace.Web.ViewModels.Competition
+@model DetailsViewModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">@(Model?.Name ?? "Competition Details")</h3>
+                    @if (Model?.IsActive == true)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </div>
+                <button class="btn btn-light" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            @if (Model == null)
+            {
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Competition data not available
+                </div>
+            }
+            else
+            {
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="info-group">
+                            <label class="text-muted">Organizer</label>
+                            <p class="h5">@(Model.Organizer ?? "Not specified")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-group">
+                            <label class="text-muted">Dates</label>
+                            <p class="h5">
+                                @if (Model.StartDate != null && Model.EndDate != null)
+                                {
+                                    <span>@Model.StartDate.ToString("dd.MM.yyyy") - @Model.EndDate.ToString("dd.MM.yyyy")</span>
+                                }
+                                else
+                                {
+                                    <span>Dates not set</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <a asp-action="Climbers" asp-route-id="@Model.Id" 
+                           class="card action-card text-decoration-none h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                <h4 class="card-title">Climbers</h4>
+                                <div class="counter-badge">
+                                    @(Model.ClimbersCount)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a asp-action="Clubs" asp-route-id="@Model.Id"
+                           class="card action-card text-decoration-none h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                                <h4 class="card-title">Clubs</h4>
+                                <div class="counter-badge">
+                                    @(Model.ClubsCount)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a asp-action="Arbitrators" asp-route-idCompetition="@Model.Id"
+                           class="card action-card text-decoration-none h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-gavel fa-3x text-primary mb-3"></i>
+                                <h4 class="card-title">Arbitrators</h4>
+                                <div class="counter-badge">
+                                    @(Model.ArbitratorsCount)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-4">
+                        <a asp-action="Boulders" asp-route-id="@Model.Id"
+                           class="card action-card text-decoration-none h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-mountain fa-3x text-primary mb-3"></i>
+                                <h4 class="card-title">Boulders</h4>
+                                <div class="counter-badge">
+                                    @(Model.BoulderCount)
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-4">
+                        @if (Model.IsActive)
+                        {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#activeCompetitionModal"
+                               class="card action-card text-decoration-none h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                                    <h4 class="card-title">Edit Competition</h4>
+                                    <p class="text-muted">Competition must be stopped first</p>
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.Id"
+                               class="card action-card text-decoration-none h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                                    <h4 class="card-title">Edit Competition</h4>
+                                    <p class="text-muted">Modify competition details</p>
+                                </div>
+                            </a>
+                        }
+                    </div>
+
+                    <div class="col-md-4">
+                        <a asp-action="SetQuota" asp-route-id="@Model.Id"
+                           class="card action-card text-decoration-none h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users-cog fa-3x text-primary mb-3"></i>
+                                <h4 class="card-title">Set Quota for Groups</h4>
+                                <p class="text-muted">Manage group participation limits</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Active Competition -->
+<div class="modal fade" id="activeCompetitionModal" tabindex="-1" aria-labelledby="activeCompetitionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activeCompetitionModalLabel">Active Competition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    This competition is currently active. You need to stop it before making any changes.
+                </div>
+                <p>Would you like to stop the competition now?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a asp-action="Stop" asp-route-idCompetition="@Model?.Id" class="btn btn-danger">
+                    <i class="fas fa-stop"></i> Stop Competition
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-group label {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    
+    .action-card {
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .counter-badge {
+        background-color: #e9ecef;
+        color: #495057;
+        font-size: 1.25rem;
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .btn-light {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .btn-light:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5em 1em;
+        margin-top: 0.5rem;
+    }
+</style>
+
+@section Scripts {
+}

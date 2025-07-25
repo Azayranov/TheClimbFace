@@ -43,6 +43,7 @@ builder.Services.AddScoped<IRepository<ClimbingCompetition>, BaseRepository<Clim
 
 // Register application services
 builder.Services.AddScoped<IHomeService, HomeService>();
+builder.Services.AddScoped<ICompetitionService, CompetitionService>();
 
 
 // Configure cookie authentication settings
