@@ -48,14 +48,14 @@ namespace TheClimbFace.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string Id)
         {
-            var user = await userManager.GetUserAsync(User);
 
             if (!Guid.TryParse(Id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
             var model = await competitionService.GetCompetitionDetailsAsync(competitionId);
 
-            if (model.ApplicationUserId != user!.Id)
+            if (!competitionService.IsUserCreator(model.ApplicationUserId, user!.Id))
                 return RedirectToAction(nameof(Index));
 
             return View(model);
@@ -64,14 +64,14 @@ namespace TheClimbFace.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string Id)
         {
-            var user = await userManager.GetUserAsync(User);
 
             if (!Guid.TryParse(Id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
             var model = await competitionService.GetCompetitionAsync(competitionId);
 
-            if (model.ApplicationUserId != user!.Id)
+            if (!competitionService.IsUserCreator(model.ApplicationUserId, user!.Id))
                 return RedirectToAction(nameof(Index));
 
             return View(model);
@@ -101,13 +101,13 @@ namespace TheClimbFace.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await userManager.GetUserAsync(User);
             if (!Guid.TryParse(id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
             var competition = await competitionService.GetCompetitionAsync(competitionId);
 
-            if (competition.ApplicationUserId != user!.Id)
+            if (!competitionService.IsUserCreator(competition.ApplicationUserId, user!.Id))
                 return RedirectToAction(nameof(Index));
 
             await competitionService.DeleteCompetitionAsync(competitionId);
@@ -121,6 +121,11 @@ namespace TheClimbFace.Web.Controllers
             if (!Guid.TryParse(idCompetition, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
+            var competition = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (!competitionService.IsUserCreator(competition.ApplicationUserId, user!.Id))
+                return RedirectToAction(nameof(Index));
 
             await competitionService.StartCompetitionAsync(competitionId);
 
@@ -132,6 +137,12 @@ namespace TheClimbFace.Web.Controllers
         public async Task<IActionResult> Stop(string idCompetition)
         {
             if (!Guid.TryParse(idCompetition, out Guid competitionId))
+                return RedirectToAction(nameof(Index));
+
+            var user = await userManager.GetUserAsync(User);
+            var competition = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (!competitionService.IsUserCreator(competition.ApplicationUserId, user!.Id))
                 return RedirectToAction(nameof(Index));
 
             await competitionService.StopCompetitionAsync(competitionId);

@@ -208,6 +208,11 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
         };
     }
 
+    public bool IsUserCreator(Guid applicationUserId, Guid userId)
+    {
+        return applicationUserId == userId;
+    }
+
     public async Task StartCompetitionAsync(Guid competitionId)
     {
         ClimbingCompetition? competition = await competitionRepository

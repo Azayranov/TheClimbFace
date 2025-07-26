@@ -15,6 +15,8 @@ public interface ICompetitionService
     Task DeleteCompetitionAsync(Guid competitionId);
     Task StartCompetitionAsync(Guid competitionId);
     Task StopCompetitionAsync(Guid competitionId);
+    bool IsUserCreator(Guid applicationUserId, Guid userId);
+
 
 
 
