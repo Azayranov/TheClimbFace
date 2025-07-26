@@ -12,7 +12,7 @@ public interface ICompetitionService
     Task<CreateCompetitionInputModel> GetCompetitionAsync(Guid competitionId);
     Task EditCompetitionAsync(CreateCompetitionInputModel model, DateTime startDate, DateTime endDate, Guid competitionId);
     Task AddCompetitionBouldersAsync(ClimbingCompetition competition);
-
+    Task DeleteCompetitionAsync(Guid competitionId);
 
 
 }

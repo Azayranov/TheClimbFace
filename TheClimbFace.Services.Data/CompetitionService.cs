@@ -7,7 +7,9 @@ using TheClimbFace.Web.ViewModels.Competition;
 
 namespace TheClimbFace.Services.Data;
 
-public class CompetitionService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Boulder> boulderRepository) : ICompetitionService
+public class CompetitionService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Boulder> boulderRepository,
+                                IRepository<ClimberBoulderQualification> climbersBouldersRepository, IRepository<Climber> climberRepository,
+                                IRepository<Club> clubRepository) : ICompetitionService
 {
     public async Task AddCompetitionBouldersAsync(ClimbingCompetition competition)
     {
@@ -31,6 +33,24 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
         await competitionRepository.AddAsync(competition);
     }
 
+    public async Task DeleteCompetitionAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(c => c.Climbers)
+            .Include(cl => cl.Clubs)
+            .Include(cb => cb.ClimbersBouldersQualifications)
+            .Include(b => b.Boulders)
+            .FirstOrDefaultAsync();
+
+        await boulderRepository.DeleteRangeAsync(competition!.Boulders.ToList());
+        await climbersBouldersRepository.DeleteRangeAsync(competition!.ClimbersBouldersQualifications.ToList());
+        await climberRepository.DeleteRangeAsync(competition!.Climbers.ToList());
+        await clubRepository.DeleteRangeAsync(competition!.Clubs.ToList());
+
+        await competitionRepository.DeleteAsync(competitionId);
+    }
 
     public async Task EditCompetitionAsync(CreateCompetitionInputModel model, DateTime startDate, DateTime endDate, Guid competitionId)
     {
@@ -112,7 +132,7 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
             ArbitratorsCount = competition.Arbitrators.Count,
             IsActive = competition.IsActive,
             ApplicationUserId = competition.ApplicationUserId
-            
+
         };
 
         return model;

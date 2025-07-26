@@ -97,5 +97,22 @@ namespace TheClimbFace.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (!Guid.TryParse(id, out Guid competitionId))
+                return RedirectToAction(nameof(Index));
+
+            var competition = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (competition.ApplicationUserId != user!.Id)
+                return RedirectToAction(nameof(Index));
+
+            await competitionService.DeleteCompetitionAsync(competitionId);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
