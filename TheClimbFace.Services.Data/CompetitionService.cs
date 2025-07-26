@@ -104,7 +104,6 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
 
     }
 
-
     public async Task<DetailsViewModel> GetCompetitionDetailsAsync(Guid competitionId)
     {
         ClimbingCompetition? competition = await competitionRepository
@@ -209,4 +208,54 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
         };
     }
 
+    public async Task StartCompetitionAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(c => c.Climbers)
+            .Include(b => b.Boulders)
+            .Include(x => x.ClimbersBouldersQualifications)
+            .Include(c => c.Clubs)
+            .FirstOrDefaultAsync();
+
+        var climbersBoulders = new List<ClimberBoulderQualification>();
+
+        var climbers = competition!.Climbers.ToList();
+        var boulders = competition.Boulders.ToList();
+
+        foreach (var c in climbers)
+        {
+            var climberId = c.Id;
+
+            foreach (var b in boulders)
+            {
+                var boulderId = b.Id;
+
+                ClimberBoulderQualification cb = new()
+                {
+                    ClimberId = climberId,
+                    BoulderId = boulderId
+                };
+
+                competition.ClimbersBouldersQualifications.Add(cb);
+            }
+        }
+        competition!.IsActive = true;
+
+        await competitionRepository.SaveChangesAsync();
+    }
+
+    public async Task StopCompetitionAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(cb => cb.ClimbersBouldersQualifications)
+            .FirstOrDefaultAsync();
+
+        await climbersBouldersRepository.DeleteRangeAsync(competition!.ClimbersBouldersQualifications.ToList());
+        competition!.IsActive = false;
+        await competitionRepository.SaveChangesAsync();
+    }
 }

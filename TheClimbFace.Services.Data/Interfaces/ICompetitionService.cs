@@ -13,6 +13,9 @@ public interface ICompetitionService
     Task EditCompetitionAsync(CreateCompetitionInputModel model, DateTime startDate, DateTime endDate, Guid competitionId);
     Task AddCompetitionBouldersAsync(ClimbingCompetition competition);
     Task DeleteCompetitionAsync(Guid competitionId);
+    Task StartCompetitionAsync(Guid competitionId);
+    Task StopCompetitionAsync(Guid competitionId);
+
 
 
 }

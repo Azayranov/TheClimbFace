@@ -12,16 +12,16 @@ public class HomeViewModel
     public DateTime EndDate { get; set; }
 
 
-    public HomeViewModel ToHomeViewModel(ClimbingCompetition competitions)
+    public HomeViewModel ToHomeViewModel(ClimbingCompetition competition)
     {
 
         HomeViewModel model = new()
         {
-            Id = Id.ToString(),
-            Name = Name,
-            Organizer = Organizer,
-            StartDate = StartDate,
-            EndDate = EndDate
+            Id = competition.Id.ToString(),
+            Name = competition.Name,
+            Organizer = competition.Organizer,
+            StartDate = competition.StartDate,
+            EndDate = competition.EndDate
         };
 
         return model;

@@ -114,5 +114,29 @@ namespace TheClimbFace.Web.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Start(string idCompetition)
+        {
+            if (!Guid.TryParse(idCompetition, out Guid competitionId))
+                return RedirectToAction(nameof(Index));
+
+
+            await competitionService.StartCompetitionAsync(competitionId);
+
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Stop(string idCompetition)
+        {
+            if (!Guid.TryParse(idCompetition, out Guid competitionId))
+                return RedirectToAction(nameof(Index));
+
+            await competitionService.StopCompetitionAsync(competitionId);
+
+            return RedirectToAction(nameof(Details), new { id = idCompetition });
+        }
     }
 }
