@@ -1,0 +1,288 @@
+﻿@using TheClimbFace.Web.ViewModels.Climber
+@model CompetitionClimbersViewModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">@(Model?.CompetitionName ?? "Competition") Climbers</h3>
+                    <p class="mb-0 mt-1 text-white-50">
+                        <i class="fas fa-users me-1"></i> Total: @(Model?.Climbers?.Count ?? 0)
+                    </p>
+                </div>
+                <div>
+                    @if (Model?.IsActive == true)
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#activeCompetitionModal"
+                            class="btn btn-light me-2">
+                            <i class="fas fa-plus"></i> Add Climber
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="btn-group">
+                            <a asp-action="AddClimber" asp-route-competitionId="@Model?.CompetitionId"
+                                class="btn btn-light me-2">
+                                <i class="fas fa-plus"></i> Add Climber
+                            </a>
+                            @if (Model?.Climbers?.Any() == true)
+                            {
+                                <a asp-action="SetStartingNumbers" asp-route-competitionId="@Model?.CompetitionId"
+                                    class="btn btn-light me-2">
+                                </a>
+                            }
+                        </div>
+                    }
+                    <a class="btn btn-light" asp-action="Details" asp-route-id="@Model?.CompetitionId">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @if (Model?.Climbers == null || !Model.Climbers.Any())
+            {
+                <div class="text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-user-plus fa-4x text-muted mb-3"></i>
+                        <h4>No Climbers Yet</h4>
+                        <p class="text-muted mb-4">Start by adding your first climber to the competition</p>
+                        @if (Model?.IsActive == true)
+                        {
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#activeCompetitionModal" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add First Climber
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="AddClimber" asp-route-competitionId="@Model?.CompetitionId" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add First Climber
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="climbers-list">
+                    @foreach (var climber in Model.Climbers)
+                    {
+                        <div class="climber-card mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="number-container">
+                                        <small class="number-label">Start Number</small>
+                                        <div class="start-number @(climber.StartNumber == 0 ? "not-set" : "")">
+                                            @if (climber.StartNumber == 0)
+                                            {
+                                                <span class="not-set-text">Not Set</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="number">#@climber.StartNumber</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <h5 class="mb-1">@climber.FirstName @climber.LastName</h5>
+                                    <div class="climber-details">
+                                        <span class="badge bg-primary me-2">
+                                            <i class="fas fa-building me-1"></i> Club: @(climber.ClubName ?? "No Club")
+                                        </span>
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-layer-group me-1"></i> Group: @(climber.GroupNumber ?? "No Group")
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="btn-group">
+                                        @if (!Model.IsActive)
+                                        {
+                                            <a href="#" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
+                                                data-bs-target="#setNumberModal-@climber.Id">
+                                                <i class="fas fa-hashtag"></i> Set Number
+                                            </a>
+                                        }
+                                        <a asp-action="DeleteClimber" asp-route-idClimber="@climber.Id"
+                                            asp-route-idCompetition="@Model?.CompetitionId"
+                                            class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to remove this climber?')">
+                                            <i class="fas fa-user-minus"></i> Remove
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal for Setting Start Number -->
+                        <div class="modal fade" id="setNumberModal-@climber.Id" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Set Start Number</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <form asp-action="SetStartNumber" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="ClimberId" value="@climber.Id" />
+                                            <input type="hidden" name="CompetitionId" value="@Model.CompetitionId" />
+                                            <div class="mb-3">
+                                                <label class="form-label">Start Number for @climber.FirstName
+                                                    @climber.LastName</label>
+                                                <input type="number" name="StartNumber" class="form-control" min="1"
+                                                    value="@(climber.StartNumber == 0 ? "" : climber.StartNumber.ToString())"
+                                                    required />
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Save Number
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Active Competition -->
+<div class="modal fade" id="activeCompetitionModal" tabindex="-1" aria-labelledby="activeCompetitionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activeCompetitionModalLabel">Active Competition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This competition is currently active. You need to stop it before making any changes.
+                </div>
+                <p>Would you like to stop the competition now?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a asp-action="Stop" asp-route-idCompetition="@Model?.CompetitionId" class="btn btn-danger">
+                    <i class="fas fa-stop"></i> Stop Competition
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .climber-card {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .climber-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    .number-container {
+        text-align: center;
+    }
+
+    .number-label {
+        display: block;
+        color: #6c757d;
+        font-size: 0.7rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .start-number {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .start-number.not-set {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+
+    .start-number .not-set-text {
+        font-size: 0.7rem;
+        text-align: center;
+    }
+
+    .start-number .number {
+        font-size: 1.2rem;
+    }
+
+    .climber-details {
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        padding: 0.5em 0.8em;
+    }
+
+    .empty-state {
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        opacity: 0.5;
+    }
+
+    .btn-group .btn {
+        padding: 0.375rem 0.75rem;
+    }
+
+    .btn-group .btn i {
+        font-size: 0.875rem;
+    }
+
+    .card-header .text-white-50 {
+        opacity: 0.8;
+    }
+
+    .table-responsive {
+        margin: 0 -1rem;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .form-control-sm {
+        width: 100px;
+    }
+</style>
+
+@section Scripts {
+}

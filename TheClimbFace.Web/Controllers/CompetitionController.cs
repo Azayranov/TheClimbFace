@@ -149,5 +149,7 @@ namespace TheClimbFace.Web.Controllers
 
             return RedirectToAction(nameof(Details), new { id = idCompetition });
         }
+
+        
     }
 }
