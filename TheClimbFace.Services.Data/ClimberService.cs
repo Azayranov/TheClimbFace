@@ -9,6 +9,50 @@ namespace TheClimbFace.Services.Data;
 
 public class ClimberService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Climber> climbingRepository) : IClimberService
 {
+    public async Task AddClimberToCompetitionAsync(Guid competitionId, AddClimberInputModel model, DateTime birthDate)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(c => c.Climbers)
+            .ThenInclude(c => c.Club)
+            .FirstOrDefaultAsync();
+
+        //climber age
+        #warning make it a method
+        int climberAge = DateTime.Now.Year - birthDate.Year;
+
+        //climber group
+        #warning make it a method
+
+        int climberGroup = 0;
+
+        if (climberAge >= 7 && climberAge <= 20)
+            climberGroup = (climberAge - 7) / 2 + 1;
+
+        //climber ClubId
+        #warning make it a method
+
+        Club club = new();
+        Climber climber;
+
+        if (competition!.Clubs.FirstOrDefault(x => x.ClubName == model.ClubName) != null)
+            club = competition.Clubs.First(n => n.ClubName == model.ClubName);
+        else
+        {
+            club = new Club
+            {
+                ClubName = model.ClubName
+            };
+        }
+
+        climber = model.ToClimber(club, birthDate, climberAge, climberGroup);
+
+        competition.Clubs.Add(club);
+        competition.Climbers.Add(climber);
+        await competitionRepository.SaveChangesAsync();
+    }
+
     public async Task<CompetitionClimbersViewModel> GetCompetitionClimbersAsync(Guid competitionId)
     {
         ClimbingCompetition? competition = await competitionRepository
