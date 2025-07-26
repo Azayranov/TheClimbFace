@@ -76,7 +76,8 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
             EndDay = competition.EndDate.Day,
             EndMonth = competition.EndDate.ToString("MMMM"),
             EndYear = competition.EndDate.Year,
-            RouteCount = competition.RouteCount
+            RouteCount = competition.RouteCount,
+            ApplicationUserId = competition.ApplicationUserId
         };
 
         return model;
@@ -109,7 +110,9 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
             ClubsCount = competition.Clubs.Count,
             BoulderCount = competition.Boulders.Count,
             ArbitratorsCount = competition.Arbitrators.Count,
-            IsActive = competition.IsActive
+            IsActive = competition.IsActive,
+            ApplicationUserId = competition.ApplicationUserId
+            
         };
 
         return model;

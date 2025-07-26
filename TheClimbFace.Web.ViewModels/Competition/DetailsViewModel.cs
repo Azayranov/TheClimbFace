@@ -14,5 +14,6 @@ public class DetailsViewModel
     public int ClubsCount { get; set; }
     public int ArbitratorsCount { get; set; }
     public int BoulderCount { get; set; }
+    public Guid ApplicationUserId { get; set; }
 }
 

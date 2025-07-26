@@ -7,8 +7,10 @@ using TheClimbFace.Web.ViewModels.Competition;
 
 namespace TheClimbFace.Web.Controllers
 {
+    [Authorize]
     public class CompetitionController(ICompetitionService competitionService, UserManager<ApplicationUser> userManager) : Controller
     {
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -17,14 +19,12 @@ namespace TheClimbFace.Web.Controllers
             return View(model);
         }
 
-        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCompetitionInputModel model)
         {
@@ -48,10 +48,15 @@ namespace TheClimbFace.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string Id)
         {
+            var user = await userManager.GetUserAsync(User);
+
             if (!Guid.TryParse(Id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
             var model = await competitionService.GetCompetitionDetailsAsync(competitionId);
+
+            if (model.ApplicationUserId != user!.Id)
+                return RedirectToAction(nameof(Index));
 
             return View(model);
         }
@@ -59,10 +64,15 @@ namespace TheClimbFace.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string Id)
         {
+            var user = await userManager.GetUserAsync(User);
+
             if (!Guid.TryParse(Id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
             var model = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (model.ApplicationUserId != user!.Id)
+                return RedirectToAction(nameof(Index));
 
             return View(model);
         }
@@ -72,7 +82,6 @@ namespace TheClimbFace.Web.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-
 
             if (!Guid.TryParse(model.Id, out Guid competitionId))
                 return RedirectToAction(nameof(Index));

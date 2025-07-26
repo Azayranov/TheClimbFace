@@ -47,6 +47,8 @@ public class CreateCompetitionInputModel
     [Required]
     public int RouteCount { get; set; } = 0;
 
+    public Guid ApplicationUserId { get; set; }
+
     public ClimbingCompetition ToClimbingCompetition(DateTime startDate, DateTime endDate)
     {
         ClimbingCompetition climbingCompetition = new()
