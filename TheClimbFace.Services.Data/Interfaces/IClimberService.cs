@@ -7,6 +7,8 @@ public interface IClimberService
 {
     Task<CompetitionClimbersViewModel> GetCompetitionClimbersAsync(Guid competitionId);
     Task AddClimberToCompetitionAsync(Guid competitionId, AddClimberInputModel model, DateTime birthDate);
+    Task DeleteClimberAsync(Guid climberId);
+
 
 
 }

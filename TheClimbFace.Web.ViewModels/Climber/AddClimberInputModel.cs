@@ -29,7 +29,7 @@ public class AddClimberInputModel
     public int BirthYear { get; set; }
 
 
-    public Data.Models.Climber ToClimber(Club club, DateTime birthDate, int age, int group)
+    public Data.Models.Climber ToClimber(Data.Models.Club club, DateTime birthDate, int age, int group)
     {
         Data.Models.Climber climber = new()
         {

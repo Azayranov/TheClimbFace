@@ -62,5 +62,19 @@ namespace TheClimbFace.Web.Controllers
             return RedirectToAction(nameof(Index), new { id = model.CompetitionId });
         }
 
+            [HttpGet]
+    public async Task<IActionResult> Delete(string idClimber, string idCompetition)
+    {
+        if (!Guid.TryParse(idClimber, out Guid climberId))
+            return RedirectToAction(nameof(Index));
+
+        if (!Guid.TryParse(idCompetition, out Guid competitionId))
+            return RedirectToAction(nameof(Index));
+
+        await climberService.DeleteClimberAsync(climberId);
+
+        return RedirectToAction(nameof(Index), new { id = competitionId });
+    }
+
     }
 }

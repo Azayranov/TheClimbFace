@@ -49,6 +49,7 @@ builder.Services.AddScoped<IRepository<ClimberBoulderQualification>, BaseReposit
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICompetitionService, CompetitionService>();
 builder.Services.AddScoped<IClimberService, ClimberService>();
+builder.Services.AddScoped<IClubService, ClubService>();
 
 
 // Configure cookie authentication settings

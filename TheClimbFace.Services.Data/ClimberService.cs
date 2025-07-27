@@ -7,7 +7,7 @@ using TheClimbFace.Web.ViewModels.Climber;
 
 namespace TheClimbFace.Services.Data;
 
-public class ClimberService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Climber> climbingRepository) : IClimberService
+public class ClimberService(IRepository<ClimbingCompetition> competitionRepository, IRepository<Climber> climberRepository) : IClimberService
 {
     public async Task AddClimberToCompetitionAsync(Guid competitionId, AddClimberInputModel model, DateTime birthDate)
     {
@@ -51,6 +51,11 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
         competition.Clubs.Add(club);
         competition.Climbers.Add(climber);
         await competitionRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteClimberAsync(Guid climberId)
+    {
+        await climberRepository.DeleteAsync(climberId);
     }
 
     public async Task<CompetitionClimbersViewModel> GetCompetitionClimbersAsync(Guid competitionId)
