@@ -42,6 +42,8 @@ builder.Services.AddScoped<IRepository<Boulder>, BaseRepository<Boulder>>();
 builder.Services.AddScoped<IRepository<Club>, BaseRepository<Club>>();
 builder.Services.AddScoped<IRepository<Climber>, BaseRepository<Climber>>();
 builder.Services.AddScoped<IRepository<ClimberBoulderQualification>, BaseRepository<ClimberBoulderQualification>>();
+builder.Services.AddScoped<IRepository<ApplicationUser>, BaseRepository<ApplicationUser>>();
+
 
 
 
@@ -50,6 +52,7 @@ builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<ICompetitionService, CompetitionService>();
 builder.Services.AddScoped<IClimberService, ClimberService>();
 builder.Services.AddScoped<IClubService, ClubService>();
+builder.Services.AddScoped<IArbitratorService, ArbitratorService>();
 
 
 // Configure cookie authentication settings
