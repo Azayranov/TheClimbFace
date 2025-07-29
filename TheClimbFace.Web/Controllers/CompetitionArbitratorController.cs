@@ -1,10 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TheClimbFace.Data.Models;
 using TheClimbFace.Services.Data.Interfaces;
 using TheClimbFace.Web.ViewModels.Arbitrator;
 
 namespace TheClimbFace.Web.Controllers
 {
-    public class CompetitionArbitratorController(IArbitratorService arbitratorService) : Controller
+    [Authorize]
+    public class CompetitionArbitratorController(IArbitratorService arbitratorService, ICompetitionService competitionService, UserManager<ApplicationUser> userManager) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> Index(string idCompetition)
@@ -12,6 +16,11 @@ namespace TheClimbFace.Web.Controllers
             if (!Guid.TryParse(idCompetition, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
+            var compModel = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (!competitionService.IsUserCreator(user!.Id, compModel.ApplicationUserId))
+                return RedirectToAction("Index", "Home");
 
             var model = await arbitratorService.GetCompetitionArbitratorsAsync(competitionId);
 
@@ -25,6 +34,12 @@ namespace TheClimbFace.Web.Controllers
 
             if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
                 return RedirectToAction(nameof(Index));
+
+            var user = await userManager.GetUserAsync(User);
+            var compModel = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (!competitionService.IsUserCreator(user!.Id, compModel.ApplicationUserId))
+                return RedirectToAction("Index", "Home");
 
             await arbitratorService.AddArbitratorToCompetitionAsync(competitionId, model);
 
@@ -41,11 +56,16 @@ namespace TheClimbFace.Web.Controllers
             if (!Guid.TryParse(model.ArbitratorId, out Guid userId))
                 return RedirectToAction(nameof(Index));
 
+            var user = await userManager.GetUserAsync(User);
+            var compModel = await competitionService.GetCompetitionAsync(competitionId);
+
+            if (!competitionService.IsUserCreator(user!.Id, compModel.ApplicationUserId))
+                return RedirectToAction("Index", "Home");
+
             await arbitratorService.DeleteArbitratorFromCompetitionAsync(competitionId, userId);
 
             return RedirectToAction(nameof(Index), new { idCompetition = model.CompetitionId });
         }
-
 
     }
 }
