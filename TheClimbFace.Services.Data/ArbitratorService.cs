@@ -4,6 +4,7 @@ using TheClimbFace.Data.Models;
 using TheClimbFace.Data.Repository.Interfaces;
 using TheClimbFace.Services.Data.Interfaces;
 using TheClimbFace.Web.ViewModels.Arbitrator;
+using TheClimbFace.Web.ViewModels.Home;
 
 namespace TheClimbFace.Services.Data;
 
@@ -21,8 +22,8 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
         competition.Arbitrators.Remove(arbitrator);
         await competitionRepository.SaveChangesAsync();
     }
-    
-    public async Task AddArbitratorToCompetitionAsync(Guid competitionId, ArbitratorViewModel model)
+
+    public async Task<bool> AddArbitratorToCompetitionAsync(Guid competitionId, AddArbitratorInputModel model)
     {
         ClimbingCompetition? competition = await competitionRepository
             .GetAllAttached()
@@ -31,8 +32,11 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
             .FirstOrDefaultAsync();
 
         var user = await userRepository.GetAllAttached()
-            .Where(x => x.Email == model.Email)
+            .Where(x => x.Email.ToLower() == model.Email.ToLower())
             .FirstOrDefaultAsync();
+
+        if (user == null)
+            return false;
 
         Arbitrator arbitrator = new()
         {
@@ -40,9 +44,12 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
             Name = model.Name,
             AssignedBoulderNumber = model.AssignedBoulderNumber
         };
+
+
         competition!.Arbitrators.Add(arbitrator);
 
         await competitionRepository.SaveChangesAsync();
+        return true;
     }
 
 
@@ -72,6 +79,25 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
             arbitrators.Add(arbitrator);
         }
 
+
+        ArbitratorsViewModel model = new()
+        {
+            CompetitionId = competitionId.ToString(),
+            CompetitionName = competition.Name,
+            Arbitrators = arbitrators,
+        };
+
+        return model;
+    }
+
+    public async Task<List<BoulderViewModel>> GetAvailableBouldersAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(x => x.Arbitrators)
+            .FirstOrDefaultAsync();
+
         List<BoulderViewModel> boulders = new();
 
         foreach (var b in competition.Boulders)
@@ -85,13 +111,23 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
             boulders.Add(boulder);
         }
 
-        ArbitratorsViewModel model = new()
-        {
-            CompetitionId = competitionId.ToString(),
-            CompetitionName = competition.Name,
-            Arbitrators = arbitrators,
-            AvailableBoulders = boulders
-        };
+        return boulders;
+    }
+
+    public async Task<AddArbitratorInputModel> GetAddArbitratorModelAsync(Guid competitionId)
+    {
+
+        ClimbingCompetition? competition = await competitionRepository.GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(x => x.Boulders)
+            .FirstOrDefaultAsync();
+
+        var model = new AddArbitratorInputModel();
+
+        List<BoulderViewModel> boulders = await GetAvailableBouldersAsync(competitionId);
+
+        model.AvailableBoulders = boulders;
+        model.CompetitionId = competitionId.ToString();
 
         return model;
     }

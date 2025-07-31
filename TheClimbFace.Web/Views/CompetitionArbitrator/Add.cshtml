@@ -1,0 +1,45 @@
+﻿@model TheClimbFace.Web.ViewModels.Arbitrator.AddArbitratorInputModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">Add New Arbitrator</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Add" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input asp-for="CompetitionId" type="hidden" />
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AssignedBoulderNumber" class="form-label"></label>
+                    <select asp-for="AssignedBoulderNumber" class="form-select"
+                            asp-items="@(new SelectList(Model.AvailableBoulders, "Number", "Number"))">
+                        <option value="">Not Assigned</option>
+                    </select>
+                    <span asp-validation-for="AssignedBoulderNumber" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" asp-route-competitionId="@Model.CompetitionId" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Add Arbitrator</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
