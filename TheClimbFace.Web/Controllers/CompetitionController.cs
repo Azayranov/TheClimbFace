@@ -147,7 +147,7 @@ namespace TheClimbFace.Web.Controllers
 
             await competitionService.StopCompetitionAsync(competitionId);
 
-            return RedirectToAction(nameof(Details), new { id = idCompetition });
+            return RedirectToAction(nameof(Edit), new { id = idCompetition });
         }
 
         
