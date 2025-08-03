@@ -49,6 +49,46 @@ namespace TheClimbFace.Web.Controllers
             return View(nameof(Score), model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Fail(ScoreViewModel model)
+        {
+            Guid userId = Guid.Parse(userManager.GetUserId(User)!);
+            if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
+                return RedirectToAction(nameof(Index), "Home");
+
+            await boulderScoringService.SetFailForClimberAsync(competitionId, model.StartNumber, model.BoulderNumber);
+            var updatedModel = await boulderScoringService.GetScoreViewModelWithClimberAsync(competitionId, userId, model.StartNumber, model.BoulderNumber);
+
+            return View(nameof(Score), updatedModel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Top(ScoreViewModel model)
+        {
+            Guid userId = Guid.Parse(userManager.GetUserId(User)!);
+            if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
+                return RedirectToAction(nameof(Index), "Home");
+
+            await boulderScoringService.SetTopForClimberAsync(competitionId, model.StartNumber, model.BoulderNumber);
+            var updatedModel = await boulderScoringService.GetScoreViewModelWithClimberAsync(competitionId, userId, model.StartNumber, model.BoulderNumber);
+
+            return View(nameof(Score), updatedModel);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Zone(ScoreViewModel model)
+        {
+            Guid userId = Guid.Parse(userManager.GetUserId(User)!);
+            if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
+                return RedirectToAction(nameof(Index), "Home");
+
+            await boulderScoringService.SetZoneForClimberAsync(competitionId, model.StartNumber, model.BoulderNumber);
+            var updatedModel = await boulderScoringService.GetScoreViewModelWithClimberAsync(competitionId, userId, model.StartNumber, model.BoulderNumber);
+
+            return View(nameof(Score), updatedModel);
+        }
 
     }
 }

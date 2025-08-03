@@ -8,7 +8,7 @@ using TheClimbFace.Web.ViewModels.Arbitrator;
 namespace TheClimbFace.Services.Data;
 
 
-public class BoulderScoringService(IRepository<ClimbingCompetition> competitionRepository) : IBoulderScoringService
+public class BoulderScoringService(IRepository<ClimbingCompetition> competitionRepository, IRepository<ClimberBoulderQualification> climbersBouldersRepository) : IBoulderScoringService
 {
     public async Task<ClimberBoulderQualification> GetClimberBoulderAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
     {
@@ -86,9 +86,12 @@ public class BoulderScoringService(IRepository<ClimbingCompetition> competitionR
         return model;
     }
 
-    public Task SetFailForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
+    public async Task SetFailForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
     {
-        throw new NotImplementedException();
+        ClimberBoulderQualification climberBoulder = await GetClimberBoulderAsync(CompetitionId, StartNumber, BoulderNumber);
+
+        climberBoulder!.CurrentTry++;
+        await climbersBouldersRepository.SaveChangesAsync();
     }
 
     public Task SetTopForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
