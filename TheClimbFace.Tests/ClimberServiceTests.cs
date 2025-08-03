@@ -21,14 +21,29 @@ public class ClimberServiceTests
     [SetUp]
     public void Setup()
     {
-        var competitionId = Guid.NewGuid();
-        clubName = "Test Club";
         birthDate = new DateTime(2007, 12, 12);
 
         mockCompetitionRepo = new Mock<IRepository<ClimbingCompetition>>();
         mockClimberRepo = new Mock<IRepository<Climber>>();
 
+        var competitions = GetClimbingCompetitionTestData();
+
+        var mockCompetitionQueryable = competitions.AsQueryable().BuildMock();
+
+        mockCompetitionRepo.Setup(r => r.GetAllAttached()).Returns(mockCompetitionQueryable);
+        mockCompetitionRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+        service = new ClimberService(mockCompetitionRepo.Object, mockClimberRepo.Object);
+    }
+
+    private List<ClimbingCompetition> GetClimbingCompetitionTestData()
+    {
+        var competitions = new List<ClimbingCompetition>();
+        competitionId = Guid.NewGuid();
+        clubName = "Test Club";
+
         var club = new Club { ClubName = clubName };
+
         competition = new ClimbingCompetition
         {
             Id = competitionId,
@@ -37,13 +52,9 @@ public class ClimberServiceTests
             Climbers = new List<Climber>()
         };
 
-        var competitions = new List<ClimbingCompetition> { competition };
-        var mockCompetitionQueryable = competitions.AsQueryable().BuildMock();
+        competitions.Add(competition);
 
-        mockCompetitionRepo.Setup(r => r.GetAllAttached()).Returns(mockCompetitionQueryable);
-        mockCompetitionRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
-
-        service = new ClimberService(mockCompetitionRepo.Object, mockClimberRepo.Object);
+        return competitions;
     }
     private Climber GetRandomTestClimberData()
     {
@@ -129,5 +140,33 @@ public class ClimberServiceTests
         Assert.That(competition.Climbers.Last().Club.ClubName, Is.EqualTo(model2.ClubName));
         Assert.That(competition.Climbers.Last().Sex, Is.EqualTo(model2.Gender));
 
+    }
+
+    [Test]
+    public async Task SetStartingNumberAsync_ShouldSetStartNumberToAllClimbers()
+    {
+        mockCompetitionRepo = new Mock<IRepository<ClimbingCompetition>>();
+        mockClimberRepo = new Mock<IRepository<Climber>>();
+
+        var competitions = GetClimbingCompetitionTestData();
+        var climber1 = GetRandomTestClimberData();
+        var climber2 = GetRandomTestClimberData();
+
+        competitions.First().Climbers.Add(climber1);
+        competitions.First().Climbers.Add(climber2);
+
+        var mockCompetitionQueryable = competitions.AsQueryable().BuildMock();
+
+        mockCompetitionRepo.Setup(r => r.GetAllAttached()).Returns(mockCompetitionQueryable);
+
+        service = new ClimberService(mockCompetitionRepo.Object, mockClimberRepo.Object);
+
+        await service.SetStartingNumbersAsync(competitions.First().Id);
+
+        Assert.That(competition.Climbers.First().StartNumber, Is.Not.EqualTo(0));
+        Assert.That(competition.Climbers.Last().StartNumber, Is.Not.EqualTo(0));
+        Assert.That(competition.Climbers.First().StartNumber, Is.EqualTo(1));
+        Assert.That(competition.Climbers.Last().StartNumber, Is.EqualTo(2));
+        
     }
 }
