@@ -1,0 +1,261 @@
+﻿@using TheClimbFace.Web.ViewModels.Home
+@model CompetitionDetailsViewModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg">
+        <!-- Competition Header -->
+        <div class="card-header bg-primary text-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">@(Model?.Name ?? "Competition Details")</h3>
+                    <p class="mb-0 mt-2">
+                        <i class="fas fa-user-tie me-2"></i>@(Model?.Organizer ?? "No Organizer")
+                    </p>
+                </div>
+                <div class="text-end">
+                    <p class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>
+                        @if (Model?.StartDate != default && Model?.EndDate != default)
+                        {
+                            @($"{Model.StartDate:dd.MM.yyyy} - {Model.EndDate:dd.MM.yyyy}")
+                        }
+                        else
+                        {
+                            <span>Dates not set</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Climbers Groups -->
+        <div class="card-body">
+            @if (Model?.Climbers == null || !Model.Climbers.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3 d-block"></i>
+                    <p class="mb-0">No climbers have been added to this competition yet.</p>
+                </div>
+            }
+            else
+            {
+                var groupedClimbers = Model.Climbers
+                    .GroupBy(c => new { Group = c.Group, Gender = c.Gender })
+                    .OrderBy(g => g.Key.Group)
+                    .ThenBy(g => g.Key.Gender);
+
+                @foreach (var group in groupedClimbers)
+                {
+                    <div class="group-section mb-5">
+                        <h4 class="group-title mb-4">
+                            Group @group.Key.Group - @group.Key.Gender
+                        </h4>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Club</th>
+                                        @{
+                                            var maxBoulders = group.SelectMany(c => c.Boulders ?? Enumerable.Empty<BouldersViewModel>())
+                                                                .Select(b => b.Number)
+                                                                .DefaultIfEmpty(0)
+                                                                .Max();
+                                        }
+                                        @for (int i = 1; i <= maxBoulders; i++)
+                                        {
+                                            <th class="text-center">
+                                                Boulder @i
+                                                <div class="boulder-attempts">
+                                                    <small>Zone | Top</small>
+                                                </div>
+                                            </th>
+                                        }
+                                        <th class="text-center results-column">
+                                            Result
+                                            <div class="results-subcols">
+                                                <div>Zone tries</div>
+                                                <div>Top tries</div>
+                                                <div>Zones</div>
+                                                <div>Tops</div>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var climber in group)
+                                    {
+                                        <tr>
+                                            <td>@(climber.FirstName) @(climber.LastName)</td>
+                                            <td>@(climber.ClubName)</td>
+                                            @for (int i = 1; i <= maxBoulders; i++)
+                                            {
+                                                var boulder = climber.Boulders?.FirstOrDefault(b => b.Number == i);
+                                                <td class="text-center">
+                                                    <div class="boulder-result">
+                                                        <span class="zone-attempt">@(boulder?.TriesForZone > 0 ? 
+                                                            boulder.TriesForZone.ToString() : "-")</span>
+                                                        <span class="divider">|</span>
+                                                        <span class="top-attempt">@(boulder?.TriesForTop > 0 ? 
+                                                            boulder.TriesForTop.ToString() : "-")</span>
+                                                    </div>
+                                                </td>
+                                            }
+                                            <td class="text-center results-data">
+                                                <div class="results-values">
+                                                    <div>@climber.ZoneTries</div>
+                                                    <div>@climber.TopTries</div>
+                                                    <div>@climber.Zones</div>
+                                                    <div>@climber.Tops</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .group-title {
+        color: #2c3e50;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0.5rem;
+    }
+
+    /* Table Base */
+    .table {
+        width: 100%;
+        font-size: 0.9rem;
+        border-collapse: collapse;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    .table td {
+        padding: 0.75rem;
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+
+    /* Name and Club columns */
+    .table td:nth-child(1),
+    .table td:nth-child(2) {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .table td:nth-child(1) { /* Name */
+        max-width: 200px;
+    }
+
+    .table td:nth-child(2) { /* Club */
+        max-width: 150px;
+    }
+
+    /* Boulder Results */
+    .boulder-attempts {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .boulder-result {
+        font-family: monospace;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .zone-attempt,
+    .top-attempt {
+        min-width: 1.5rem;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .divider {
+        color: #dee2e6;
+    }
+
+    /* Results Column */
+    .results-column {
+        background-color: #f8f9fa;
+        min-width: 180px;
+        border-left: 2px solid #dee2e6;
+    }
+
+    .results-subcols {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+        text-align: center;
+    }
+
+    .results-values {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        font-family: monospace;
+        font-size: 0.95rem;
+    }
+
+    .results-values div {
+        text-align: center;
+    }
+
+    .results-data {
+        background-color: #fff;
+        border-left: 2px solid #dee2e6;
+    }
+
+    /* Table Container */
+    .table-responsive {
+        margin: 1rem 0;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+
+    /* Mobile Adjustments */
+    @@media (max-width: 768px) {
+        .table {
+            font-size: 0.85rem;
+        }
+
+        .boulder-attempts {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            white-space: nowrap;
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .boulder-result {
+            font-size: 0.85rem;
+        }
+
+        .results-values {
+            font-size: 0.85rem;
+            gap: 0.25rem;
+        }
+    }
+</style>

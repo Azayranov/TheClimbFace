@@ -28,4 +28,15 @@ public class HomeController(IHomeService homeService, ILogger<HomeController> lo
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(string id)
+    {
+        if (!Guid.TryParse(id, out Guid competitionId))
+            return RedirectToAction(nameof(Index));
+
+        CompetitionDetailsViewModel model = await homeService.GetCompetitionDetailsAsync(competitionId);
+
+        return View(model);
+    }
 }
