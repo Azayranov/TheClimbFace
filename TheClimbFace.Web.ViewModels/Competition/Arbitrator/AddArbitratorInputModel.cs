@@ -1,7 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace TheClimbFace.Web.ViewModels.Arbitrator;
+namespace TheClimbFace.Web.ViewModels.Competition.Arbitrator;
 
 public class AddArbitratorInputModel
 {

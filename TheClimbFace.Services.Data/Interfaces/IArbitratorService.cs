@@ -1,6 +1,6 @@
 
 using TheClimbFace.Data.Models;
-using TheClimbFace.Web.ViewModels.Arbitrator;
+using TheClimbFace.Web.ViewModels.Competition.Arbitrator;
 
 namespace TheClimbFace.Services.Data.Interfaces;
 

@@ -1,6 +1,7 @@
 using System;
 
-namespace TheClimbFace.Web.ViewModels.Club;
+namespace TheClimbFace.Web.ViewModels.Competition.Club;
+
 
 public class ClubsViewModel
 {

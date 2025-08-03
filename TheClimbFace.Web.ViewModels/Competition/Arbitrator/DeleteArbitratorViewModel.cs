@@ -1,6 +1,5 @@
-using System;
+namespace TheClimbFace.Web.ViewModels.Competition.Arbitrator;
 
-namespace TheClimbFace.Web.ViewModels.Arbitrator;
 
 public class DeleteArbitratorViewModel
 {

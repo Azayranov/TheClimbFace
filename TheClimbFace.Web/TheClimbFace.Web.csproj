@@ -27,4 +27,8 @@
     <ProjectReference Include="../TheClimbFace.Web.ViewModels/TheClimbFace.Web.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views/Arbitrator/" />
+  </ItemGroup>
+
 </Project>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheClimbFace.Data.Models;
 using TheClimbFace.Services.Data.Interfaces;
-using TheClimbFace.Web.ViewModels.Arbitrator;
+using TheClimbFace.Web.ViewModels.Competition.Arbitrator;
 
 namespace TheClimbFace.Web.Controllers
 {

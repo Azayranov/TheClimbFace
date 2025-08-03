@@ -1,5 +1,5 @@
 using System;
-using TheClimbFace.Web.ViewModels.Club;
+using TheClimbFace.Web.ViewModels.Competition.Club;
 
 namespace TheClimbFace.Services.Data.Interfaces;
 

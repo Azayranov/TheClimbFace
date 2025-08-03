@@ -1,4 +1,5 @@
-namespace TheClimbFace.Web.ViewModels.Climber;
+namespace TheClimbFace.Web.ViewModels.Competition.Climber;
+
 
 public class CompetitionClimberViewModel
 {

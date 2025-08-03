@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TheClimbFace.Data.Models;
 using TheClimbFace.Data.Repository.Interfaces;
-using TheClimbFace.Web.ViewModels.Club;
+using TheClimbFace.Web.ViewModels.Competition.Club;
 
 namespace TheClimbFace.Services.Data.Interfaces;
 

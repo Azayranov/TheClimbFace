@@ -1,4 +1,4 @@
-namespace TheClimbFace.Web.ViewModels.Arbitrator;
+namespace TheClimbFace.Web.ViewModels.Competition.Arbitrator;
 
 public class BoulderViewModel
 {

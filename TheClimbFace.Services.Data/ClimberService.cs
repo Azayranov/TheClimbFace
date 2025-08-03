@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TheClimbFace.Data.Models;
 using TheClimbFace.Data.Repository.Interfaces;
 using TheClimbFace.Services.Data.Interfaces;
-using TheClimbFace.Web.ViewModels.Climber;
+using TheClimbFace.Web.ViewModels.Competition.Climber;
 
 namespace TheClimbFace.Services.Data;
 

@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using TheClimbFace.Data.Models;
 
-namespace TheClimbFace.Web.ViewModels.Climber;
+namespace TheClimbFace.Web.ViewModels.Competition.Climber;
 
 public class AddClimberInputModel
 {
