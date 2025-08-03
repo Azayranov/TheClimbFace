@@ -53,6 +53,7 @@ builder.Services.AddScoped<ICompetitionService, CompetitionService>();
 builder.Services.AddScoped<IClimberService, ClimberService>();
 builder.Services.AddScoped<IClubService, ClubService>();
 builder.Services.AddScoped<IArbitratorService, ArbitratorService>();
+builder.Services.AddScoped<IBoulderScoringService, BoulderScoringService>();
 
 
 // Configure cookie authentication settings

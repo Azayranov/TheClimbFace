@@ -52,7 +52,6 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
         return true;
     }
 
-
     public async Task<ArbitratorsViewModel> GetCompetitionArbitratorsAsync(Guid competitionId)
     {
         ClimbingCompetition? competition = await competitionRepository.GetAllAttached()
