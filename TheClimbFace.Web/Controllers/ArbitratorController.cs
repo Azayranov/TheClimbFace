@@ -7,7 +7,7 @@ namespace TheClimbFace.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Competition");
         }
 
     }
