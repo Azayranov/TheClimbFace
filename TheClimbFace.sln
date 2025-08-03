@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheClimbFace.Extensions", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheClimbFace.Data.Models", "TheClimbFace.Data.Models\TheClimbFace.Data.Models.csproj", "{2D3D3945-4307-4DA2-9D4B-51CE77FA413A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheClimbFace.Tests", "TheClimbFace.Tests\TheClimbFace.Tests.csproj", "{A8A8E000-64FB-40B1-B50E-688AE058FD1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{2D3D3945-4307-4DA2-9D4B-51CE77FA413A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D3D3945-4307-4DA2-9D4B-51CE77FA413A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D3D3945-4307-4DA2-9D4B-51CE77FA413A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8A8E000-64FB-40B1-B50E-688AE058FD1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8A8E000-64FB-40B1-B50E-688AE058FD1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8A8E000-64FB-40B1-B50E-688AE058FD1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8A8E000-64FB-40B1-B50E-688AE058FD1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
