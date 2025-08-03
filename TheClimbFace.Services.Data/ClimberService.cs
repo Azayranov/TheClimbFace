@@ -19,11 +19,11 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
             .FirstOrDefaultAsync();
 
         //climber age
-        #warning make it a method
+#warning make it a method
         int climberAge = DateTime.Now.Year - birthDate.Year;
 
         //climber group
-        #warning make it a method
+#warning make it a method
 
         int climberGroup = 0;
 
@@ -31,7 +31,7 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
             climberGroup = (climberAge - 7) / 2 + 1;
 
         //climber ClubId
-        #warning make it a method
+#warning make it a method
 
         Club club = new();
         Climber climber;
@@ -99,5 +99,26 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
         };
 
         return model;
+    }
+
+    public async Task SetStartingNumbersAsync(Guid competitionId)
+    {
+        ClimbingCompetition? competition = await competitionRepository
+            .GetAllAttached()
+            .Where(x => x.Id == competitionId)
+            .Include(c => c.Climbers)
+            .FirstOrDefaultAsync();
+
+        List<Climber> climbers = competition!.Climbers
+            .OrderBy(x => x.GroupNumber)
+            .ToList();
+
+        for (int i = 0; i < climbers.Count; i++)
+        {
+            climbers[i].StartNumber = i + 1;
+        }
+
+        competition.Climbers = climbers;
+        await competitionRepository.SaveChangesAsync();
     }
 }

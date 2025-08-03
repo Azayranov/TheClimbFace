@@ -11,28 +11,27 @@
                         <i class="fas fa-users me-1"></i> Total: @(Model?.Climbers?.Count ?? 0)
                     </p>
                 </div>
-                <div>
+                <div class="btn-group">
+                    @if (!Model.IsActive && Model?.Climbers?.Any() == true)
+                    {
+                        <a asp-action="SetStartingNumbers" asp-route-competitionId="@Model?.CompetitionId"
+                           class="btn btn-success me-2">
+                            <i class="fas fa-hashtag"></i> Set Start Numbers
+                        </a>
+                    }
                     @if (Model?.IsActive == true)
                     {
                         <a href="#" data-bs-toggle="modal" data-bs-target="#activeCompetitionModal"
-                            class="btn btn-light me-2">
+                           class="btn btn-light me-2">
                             <i class="fas fa-plus"></i> Add Climber
                         </a>
                     }
                     else
                     {
-                        <div class="btn-group">
-                            <a asp-action="Add" asp-route-competitionId="@Model?.CompetitionId"
-                                class="btn btn-light me-2">
-                                <i class="fas fa-plus"></i> Add Climber
-                            </a>
-                            @if (Model?.Climbers?.Any() == true)
-                            {
-                                <a asp-action="SetStartingNumbers" asp-route-competitionId="@Model?.CompetitionId"
-                                    class="btn btn-light me-2">
-                                </a>
-                            }
-                        </div>
+                        <a asp-action="Add" asp-route-competitionId="@Model?.CompetitionId"
+                           class="btn btn-light me-2">
+                            <i class="fas fa-plus"></i> Add Climber
+                        </a>
                     }
                     <a class="btn btn-light" asp-controller="Competition" asp-action="Details" asp-route-id="@Model?.CompetitionId">
                         <i class="fas fa-arrow-left"></i> Back
@@ -99,13 +98,6 @@
                                 </div>
                                 <div class="col-auto">
                                     <div class="btn-group">
-                                        @if (!Model.IsActive)
-                                        {
-                                            <a href="#" class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
-                                                data-bs-target="#setNumberModal-@climber.Id">
-                                                <i class="fas fa-hashtag"></i> Set Number
-                                            </a>
-                                        }
                                         <a asp-action="Delete" asp-route-idClimber="@climber.Id"
                                             asp-route-idCompetition="@Model?.CompetitionId"
                                             class="btn btn-outline-danger btn-sm"
@@ -113,39 +105,6 @@
                                             <i class="fas fa-user-minus"></i> Remove
                                         </a>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Modal for Setting Start Number -->
-                        <div class="modal fade" id="setNumberModal-@climber.Id" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Set Start Number</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <form asp-action="SetStartNumber" method="post">
-                                        <div class="modal-body">
-                                            <input type="hidden" name="ClimberId" value="@climber.Id" />
-                                            <input type="hidden" name="CompetitionId" value="@Model.CompetitionId" />
-                                            <div class="mb-3">
-                                                <label class="form-label">Start Number for @climber.FirstName
-                                                    @climber.LastName</label>
-                                                <input type="number" name="StartNumber" class="form-control" min="1"
-                                                    value="@(climber.StartNumber == 0 ? "" : climber.StartNumber.ToString())"
-                                                    required />
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="fas fa-save"></i> Save Number
-                                            </button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>

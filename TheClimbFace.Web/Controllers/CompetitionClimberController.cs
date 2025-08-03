@@ -82,5 +82,15 @@ namespace TheClimbFace.Web.Controllers
             return RedirectToAction(nameof(Index), new { id = competitionId });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SetStartingNumbers(string competitionId)
+        {
+            if (!Guid.TryParse(competitionId, out Guid CompetitionId))
+                return RedirectToAction(nameof(Index));
+
+            await climberService.SetStartingNumbersAsync(CompetitionId);
+
+            return RedirectToAction(nameof(Index), new { id = competitionId });
+        }
     }
 }
