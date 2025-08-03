@@ -46,7 +46,7 @@
 
                 @foreach (var group in groupedClimbers)
                 {
-                    <div class="group-section mb-5">
+                    <div class="group-section mb-5 @(group.Key.Gender == "Male" ? "male-group" : "female-group")">
                         <h4 class="group-title mb-4">
                             Group @group.Key.Group - @group.Key.Gender
                         </h4>
@@ -55,6 +55,7 @@
                             <table class="table table-bordered">
                                 <thead class="table-light">
                                     <tr>
+                                        <th class="text-center">Place</th>
                                         <th>Name</th>
                                         <th>Club</th>
                                         @{
@@ -84,9 +85,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @{
+                                        int place = 1;
+                                    }
                                     @foreach (var climber in group)
                                     {
+                                        string placeClass = place == 1 ? "gold-place"
+                                                          : place == 2 ? "silver-place"
+                                                          : place == 3 ? "bronze-place"
+                                                          : "";
+
                                         <tr>
+                                            <td class="text-center align-middle">
+                                                <span class="place-number @placeClass">@place</span>
+                                            </td>
                                             <td>@(climber.FirstName) @(climber.LastName)</td>
                                             <td>@(climber.ClubName)</td>
                                             @for (int i = 1; i <= maxBoulders; i++)
@@ -94,11 +106,9 @@
                                                 var boulder = climber.Boulders?.FirstOrDefault(b => b.Number == i);
                                                 <td class="text-center">
                                                     <div class="boulder-result">
-                                                        <span class="zone-attempt">@(boulder?.TriesForZone > 0 ? 
-                                                            boulder.TriesForZone.ToString() : "-")</span>
+                                                        <span class="zone-attempt">@(boulder?.TriesForZone > 0 ? boulder.TriesForZone.ToString() : "-")</span>
                                                         <span class="divider">|</span>
-                                                        <span class="top-attempt">@(boulder?.TriesForTop > 0 ? 
-                                                            boulder.TriesForTop.ToString() : "-")</span>
+                                                        <span class="top-attempt">@(boulder?.TriesForTop > 0 ? boulder.TriesForTop.ToString() : "-")</span>
                                                     </div>
                                                 </td>
                                             }
@@ -111,6 +121,7 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        place++;
                                     }
                                 </tbody>
                             </table>
@@ -257,5 +268,38 @@
             font-size: 0.85rem;
             gap: 0.25rem;
         }
+    }
+
+    .male-group .table {
+        background-color: rgba(70, 130, 180, 0.10); /* прозрачно синьо */
+    }
+    .female-group .table {
+        background-color: rgba(255, 182, 193, 0.13); /* прозрачно розово */
+    }
+    .place-number {
+        display: inline-block;
+        min-width: 2rem;
+        font-weight: bold;
+        font-size: 1.1rem;
+        border-radius: 50%;
+        padding: 0.3rem 0.7rem;
+        background: #f8f9fa;
+        color: #333;
+        border: 2px solid transparent;
+    }
+    .gold-place {
+        background: linear-gradient(135deg, #ffd700 70%, #fffbe6 100%);
+        color: #bfa600;
+        border-color: #ffd700;
+    }
+    .silver-place {
+        background: linear-gradient(135deg, #c0c0c0 70%, #f8f9fa 100%);
+        color: #888;
+        border-color: #c0c0c0;
+    }
+    .bronze-place {
+        background: linear-gradient(135deg, #cd7f32 70%, #f8f9fa 100%);
+        color: #a97142;
+        border-color: #cd7f32;
     }
 </style>
