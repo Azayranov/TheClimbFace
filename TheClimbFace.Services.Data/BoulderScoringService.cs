@@ -94,14 +94,27 @@ public class BoulderScoringService(IRepository<ClimbingCompetition> competitionR
         await climbersBouldersRepository.SaveChangesAsync();
     }
 
-    public Task SetTopForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
+    public async Task SetTopForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
     {
-        throw new NotImplementedException();
+        ClimberBoulderQualification climberBoulder = await GetClimberBoulderAsync(CompetitionId, StartNumber, BoulderNumber);
+
+        climberBoulder!.CurrentTry++;
+        climberBoulder!.TriesForTop = climberBoulder.CurrentTry;
+
+        if (climberBoulder.TriesForZone == 0)
+            climberBoulder.TriesForZone = climberBoulder.CurrentTry;
+
+        await climbersBouldersRepository.SaveChangesAsync();
     }
 
-    public Task SetZoneForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
+  public async Task SetZoneForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
     {
-        throw new NotImplementedException();
+        ClimberBoulderQualification climberBoulder = await GetClimberBoulderAsync(CompetitionId, StartNumber, BoulderNumber);
+
+        climberBoulder!.CurrentTry++;
+        climberBoulder!.TriesForZone = climberBoulder.CurrentTry;
+
+        await climbersBouldersRepository.SaveChangesAsync();
     }
 
 }
