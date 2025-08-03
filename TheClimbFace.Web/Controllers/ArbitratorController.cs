@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheClimbFace.Data.Models;
 using TheClimbFace.Services.Data.Interfaces;
+using TheClimbFace.Web.ViewModels.Arbitrator;
 
 namespace TheClimbFace.Web.Controllers
 {
@@ -27,7 +28,27 @@ namespace TheClimbFace.Web.Controllers
 
             return View(model);
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> AddClimber(ScoreViewModel model)
+        {
+            if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
+                return RedirectToAction(nameof(Index), "Home");
+
+            Guid userId = Guid.Parse(userManager.GetUserId(User)!);
+
+            var updatedModel = await boulderScoringService.GetScoreViewModelWithClimberAsync(competitionId, userId, model.StartNumber, model.BoulderNumber);
+
+            return View(nameof(Score), updatedModel);
+        }
+
+        [HttpPost]
+        public IActionResult RemoveClimber(ScoreViewModel model)
+        {
+            model.CurrentClimber = null!;
+            return View(nameof(Score), model);
+        }
+
 
     }
 }

@@ -77,9 +77,13 @@ public class BoulderScoringService(IRepository<ClimbingCompetition> competitionR
         return model;
     }
 
-    public Task<ScoreViewModel> GetScoreViewModelWithClimberAsync(Guid competitionId, Guid userId, int startNumber, int BoulderNumber)
+    public async Task<ScoreViewModel> GetScoreViewModelWithClimberAsync(Guid competitionId, Guid userId, int startNumber, int boulderNumber)
     {
-        throw new NotImplementedException();
+        var model = await GetScoreViewModelAsync(competitionId, userId, boulderNumber);
+        model.StartNumber = startNumber;
+        model.CurrentClimber = await GetClimberForScoringAsync(competitionId, startNumber, model.BoulderNumber);
+
+        return model;
     }
 
     public Task SetFailForClimberAsync(Guid CompetitionId, int StartNumber, int BoulderNumber)
