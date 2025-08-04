@@ -1,0 +1,319 @@
+﻿@{
+    ViewData["Title"] = "500 - Internal Server Error";
+}
+
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-number">
+            <span class="digit">5</span>
+            <div class="climber-icon">😵</div>
+            <span class="digit">0</span>
+            <div class="climber-icon">0</div>
+        </div>
+        
+        <h1 class="error-title">Oops! Something went wrong on our end</h1>
+        
+        <p class="error-message">
+            We're experiencing some technical difficulties. 
+            Our climbing gear seems to have malfunctioned! 🔧
+        </p>
+        
+        <div class="error-actions">
+            <a href="/" class="btn btn-primary btn-lg">
+                <i class="fas fa-home"></i>
+                Home Page
+            </a>
+            <a href="javascript:history.back()" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i>
+                Go Back
+            </a>
+            <button onclick="location.reload()" class="btn btn-warning btn-lg">
+                <i class="fas fa-redo"></i>
+                Try Again
+            </button>
+        </div>
+        
+        <div class="fun-facts">
+            <h3>Technical Climbing Facts...</h3>
+            <ul>
+                <li>🔧 A climber's gear is checked 500 times before a big climb?</li>
+                <li>🛠️ The most common climbing injury is a 500-degree rope burn?</li>
+                <li>⚡ It takes 5 seconds to fall 500 feet in free fall?</li>
+            </ul>
+        </div>
+        
+        <div class="error-details">
+            <p class="error-note">
+                <i class="fas fa-info-circle"></i>
+                Our technical team has been notified and is working to fix this issue.
+            </p>
+        </div>
+    </div>
+    
+    <div class="floating-elements">
+        <div class="floating-tools">🔧</div>
+        <div class="floating-warning">⚠️</div>
+        <div class="floating-gear">⚙️</div>
+        <div class="floating-repair">🛠️</div>
+    </div>
+</div>
+
+<style>
+    .error-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .error-content {
+        text-align: center;
+        color: white;
+        max-width: 600px;
+        padding: 2rem;
+        z-index: 10;
+        position: relative;
+    }
+    
+    .error-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        font-size: 8rem;
+        font-weight: bold;
+        text-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    
+    .digit {
+        animation: shake 0.5s infinite;
+    }
+    
+    .digit:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .digit:nth-child(3) {
+        animation-delay: 0.1s;
+    }
+    
+    .digit:nth-child(5) {
+        animation-delay: 0.2s;
+    }
+    
+    .climber-icon {
+        font-size: 4rem;
+        margin: 0 0.5rem;
+        animation: malfunction 2s infinite;
+    }
+    
+    .error-title {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 300;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .error-message {
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        margin-bottom: 3rem;
+    }
+    
+    .btn {
+        margin: 0.5rem;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        border: 2px solid white;
+        color: white;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: white;
+        color: #ff6b6b;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(45deg, #f39c12, #e67e22);
+        color: white;
+    }
+    
+    .fun-facts {
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        margin-bottom: 2rem;
+    }
+    
+    .fun-facts h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .fun-facts ul {
+        list-style: none;
+        padding: 0;
+        text-align: left;
+    }
+    
+    .fun-facts li {
+        margin-bottom: 0.8rem;
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+    
+    .error-details {
+        background: rgba(255,255,255,0.05);
+        border-radius: 15px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .error-note {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin: 0;
+    }
+    
+    .floating-elements {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    .floating-tools,
+    .floating-warning,
+    .floating-gear,
+    .floating-repair {
+        position: absolute;
+        font-size: 3rem;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-tools {
+        top: 20%;
+        left: 10%;
+        animation-delay: 0s;
+    }
+    
+    .floating-warning {
+        top: 30%;
+        right: 15%;
+        animation-delay: 1.5s;
+    }
+    
+    .floating-gear {
+        bottom: 30%;
+        left: 20%;
+        animation-delay: 3s;
+    }
+    
+    .floating-repair {
+        bottom: 20%;
+        right: 10%;
+        animation-delay: 4.5s;
+    }
+    
+    @@keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        25% {
+            transform: translateX(-5px);
+        }
+        75% {
+            transform: translateX(5px);
+        }
+    }
+    
+    @@keyframes malfunction {
+        0%, 100% {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+        }
+        25% {
+            transform: rotate(5deg) scale(1.1);
+            opacity: 0.8;
+        }
+        50% {
+            transform: rotate(-5deg) scale(0.9);
+            opacity: 0.6;
+        }
+        75% {
+            transform: rotate(3deg) scale(1.05);
+            opacity: 0.9;
+        }
+    }
+    
+    @@keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        33% {
+            transform: translateY(-20px) rotate(5deg);
+        }
+        66% {
+            transform: translateY(-10px) rotate(-5deg);
+        }
+    }
+    
+    @@media (max-width: 768px) {
+        .error-number {
+            font-size: 5rem;
+        }
+        
+        .climber-icon {
+            font-size: 3rem;
+        }
+        
+        .error-title {
+            font-size: 1.8rem;
+        }
+        
+        .error-message {
+            font-size: 1rem;
+        }
+        
+        .floating-elements {
+            display: none;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
