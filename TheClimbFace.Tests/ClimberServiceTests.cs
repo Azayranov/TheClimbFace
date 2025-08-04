@@ -31,7 +31,6 @@ public class ClimberServiceTests
         var mockCompetitionQueryable = competitions.AsQueryable().BuildMock();
 
         mockCompetitionRepo.Setup(r => r.GetAllAttached()).Returns(mockCompetitionQueryable);
-        mockCompetitionRepo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         service = new ClimberService(mockCompetitionRepo.Object, mockClimberRepo.Object);
     }
