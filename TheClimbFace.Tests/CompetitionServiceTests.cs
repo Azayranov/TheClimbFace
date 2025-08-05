@@ -120,12 +120,10 @@ namespace TheClimbFace.Tests
         [Test]
         public async Task DeleteCompetitionAsync_ShouldDeleteCompetition()
         {
-            mockCompetitionRepo.Setup(r => r.DeleteAsync(competitionId))
-                .ReturnsAsync(true);
-
             await competitionService.DeleteCompetitionAsync(competitionId);
 
-            mockCompetitionRepo.Verify(r => r.DeleteAsync(competitionId), Times.Once);
+            Assert.That(competition.IsDeleted, Is.True);
+            Assert.That(competition.IsActive, Is.False);
         }
 
         [Test]
