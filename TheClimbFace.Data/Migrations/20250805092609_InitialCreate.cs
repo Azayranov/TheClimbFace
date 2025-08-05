@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TheClimbFace.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDb : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,7 +68,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,7 +89,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,7 +109,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -127,13 +127,13 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -153,7 +153,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,7 +172,7 @@ namespace TheClimbFace.Data.Migrations
                     Type = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     HasPassed = table.Column<bool>(type: "bit", nullable: false),
-                    ApplicationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ApplicationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,7 +181,8 @@ namespace TheClimbFace.Data.Migrations
                         name: "FK_ClimbingCompetitions_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -192,7 +193,8 @@ namespace TheClimbFace.Data.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AssignedBoulderNumber = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClimbingCompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -202,13 +204,17 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Arbitrators_ClimbingCompetitions_ClimbingCompetitionId",
+                        column: x => x.ClimbingCompetitionId,
+                        principalTable: "ClimbingCompetitions",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Arbitrators_ClimbingCompetitions_CompetitionId",
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -227,7 +233,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -236,17 +242,22 @@ namespace TheClimbFace.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ClubName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClimbingCompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clubs", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Clubs_ClimbingCompetitions_ClimbingCompetitionId",
+                        column: x => x.ClimbingCompetitionId,
+                        principalTable: "ClimbingCompetitions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Clubs_ClimbingCompetitions_CompetitionId",
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -270,7 +281,7 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -287,23 +298,27 @@ namespace TheClimbFace.Data.Migrations
                     Age = table.Column<int>(type: "int", nullable: false),
                     GroupNumber = table.Column<int>(type: "int", nullable: false),
                     StartNumber = table.Column<int>(type: "int", nullable: false),
-                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClimbingCompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Climbers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Climbers_ClimbingCompetitions_ClimbingCompetitionId",
+                        column: x => x.ClimbingCompetitionId,
+                        principalTable: "ClimbingCompetitions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Climbers_ClimbingCompetitions_CompetitionId",
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Climbers_Clubs_ClubId",
                         column: x => x.ClubId,
                         principalTable: "Clubs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -316,7 +331,8 @@ namespace TheClimbFace.Data.Migrations
                     CurrentTry = table.Column<int>(type: "int", nullable: false),
                     TriesForTop = table.Column<int>(type: "int", nullable: false),
                     TriesForZone = table.Column<int>(type: "int", nullable: false),
-                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ClimbingCompetitionId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -326,20 +342,29 @@ namespace TheClimbFace.Data.Migrations
                         column: x => x.BoulderId,
                         principalTable: "Boulders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ClimbersBouldersQualifications_Climbers_ClimberId",
                         column: x => x.ClimberId,
                         principalTable: "Climbers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClimbersBouldersQualifications_ClimbingCompetitions_ClimbingCompetitionId",
+                        column: x => x.ClimbingCompetitionId,
+                        principalTable: "ClimbingCompetitions",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ClimbersBouldersQualifications_ClimbingCompetitions_CompetitionId",
                         column: x => x.CompetitionId,
                         principalTable: "ClimbingCompetitions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Arbitrators_ClimbingCompetitionId",
+                table: "Arbitrators",
+                column: "ClimbingCompetitionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Arbitrators_CompetitionId",
@@ -396,6 +421,11 @@ namespace TheClimbFace.Data.Migrations
                 column: "CompetitionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Climbers_ClimbingCompetitionId",
+                table: "Climbers",
+                column: "ClimbingCompetitionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Climbers_ClubId",
                 table: "Climbers",
                 column: "ClubId");
@@ -411,6 +441,11 @@ namespace TheClimbFace.Data.Migrations
                 column: "BoulderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClimbersBouldersQualifications_ClimbingCompetitionId",
+                table: "ClimbersBouldersQualifications",
+                column: "ClimbingCompetitionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClimbersBouldersQualifications_CompetitionId",
                 table: "ClimbersBouldersQualifications",
                 column: "CompetitionId");
@@ -419,6 +454,11 @@ namespace TheClimbFace.Data.Migrations
                 name: "IX_ClimbingCompetitions_ApplicationUserId",
                 table: "ClimbingCompetitions",
                 column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clubs_ClimbingCompetitionId",
+                table: "Clubs",
+                column: "ClimbingCompetitionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clubs_CompetitionId",

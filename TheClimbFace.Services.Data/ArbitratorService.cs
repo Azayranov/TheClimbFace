@@ -110,6 +110,7 @@ public class ArbitratorService(IRepository<ClimbingCompetition> competitionRepos
             boulders.Add(boulder);
         }
 
+        boulders = boulders.OrderBy(x => x.Number).ToList();
         return boulders;
     }
 

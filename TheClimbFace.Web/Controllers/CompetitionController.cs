@@ -130,7 +130,7 @@ namespace TheClimbFace.Web.Controllers
             await competitionService.StartCompetitionAsync(competitionId);
 
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { Id =competitionId});
         }
 
         [HttpGet]
@@ -147,7 +147,7 @@ namespace TheClimbFace.Web.Controllers
 
             await competitionService.StopCompetitionAsync(competitionId);
 
-            return RedirectToAction(nameof(Edit), new { id = idCompetition });
+            return RedirectToAction(nameof(Details), new { Id = idCompetition });
         }
 
         

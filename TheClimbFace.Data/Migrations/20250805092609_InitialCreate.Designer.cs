@@ -12,8 +12,8 @@ using TheClimbFace.Data;
 namespace TheClimbFace.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250723194601_InitialDb")]
-    partial class InitialDb
+    [Migration("20250805092609_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,6 +231,9 @@ namespace TheClimbFace.Data.Migrations
                     b.Property<int>("AssignedBoulderNumber")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("ClimbingCompetitionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CompetitionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -242,6 +245,8 @@ namespace TheClimbFace.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClimbingCompetitionId");
 
                     b.HasIndex("CompetitionId");
 
@@ -281,6 +286,9 @@ namespace TheClimbFace.Data.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ClimbingCompetitionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("ClubId")
                         .HasColumnType("uniqueidentifier");
 
@@ -313,6 +321,8 @@ namespace TheClimbFace.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ClimbingCompetitionId");
+
                     b.HasIndex("ClubId");
 
                     b.HasIndex("CompetitionId");
@@ -326,6 +336,9 @@ namespace TheClimbFace.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BoulderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClimbingCompetitionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CompetitionId")
@@ -347,6 +360,8 @@ namespace TheClimbFace.Data.Migrations
 
                     b.HasIndex("BoulderId");
 
+                    b.HasIndex("ClimbingCompetitionId");
+
                     b.HasIndex("CompetitionId");
 
                     b.ToTable("ClimbersBouldersQualifications");
@@ -358,7 +373,7 @@ namespace TheClimbFace.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ApplicationUserId")
+                    b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("EndDate")
@@ -413,6 +428,9 @@ namespace TheClimbFace.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ClimbingCompetitionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ClubName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -422,6 +440,8 @@ namespace TheClimbFace.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClimbingCompetitionId");
 
                     b.HasIndex("CompetitionId");
 
@@ -515,10 +535,14 @@ namespace TheClimbFace.Data.Migrations
 
             modelBuilder.Entity("TheClimbFace.Data.Models.Arbitrator", b =>
                 {
-                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", null)
                         .WithMany("Arbitrators")
+                        .HasForeignKey("ClimbingCompetitionId");
+
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                        .WithMany()
                         .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TheClimbFace.Data.Models.ApplicationUser", "User")
@@ -545,16 +569,20 @@ namespace TheClimbFace.Data.Migrations
 
             modelBuilder.Entity("TheClimbFace.Data.Models.Climber", b =>
                 {
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", null)
+                        .WithMany("Climbers")
+                        .HasForeignKey("ClimbingCompetitionId");
+
                     b.HasOne("TheClimbFace.Data.Models.Club", "Club")
                         .WithMany("Climbers")
                         .HasForeignKey("ClubId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
-                        .WithMany("Climbers")
+                        .WithMany()
                         .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ClimbingCompetition");
@@ -576,10 +604,14 @@ namespace TheClimbFace.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", null)
                         .WithMany("ClimbersBouldersQualifications")
+                        .HasForeignKey("ClimbingCompetitionId");
+
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                        .WithMany()
                         .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Boulder");
@@ -591,17 +623,25 @@ namespace TheClimbFace.Data.Migrations
 
             modelBuilder.Entity("TheClimbFace.Data.Models.ClimbingCompetition", b =>
                 {
-                    b.HasOne("TheClimbFace.Data.Models.ApplicationUser", null)
+                    b.HasOne("TheClimbFace.Data.Models.ApplicationUser", "ApplicationUser")
                         .WithMany("BoulderCompetitions")
-                        .HasForeignKey("ApplicationUserId");
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("TheClimbFace.Data.Models.Club", b =>
                 {
-                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", null)
                         .WithMany("Clubs")
+                        .HasForeignKey("ClimbingCompetitionId");
+
+                    b.HasOne("TheClimbFace.Data.Models.ClimbingCompetition", "ClimbingCompetition")
+                        .WithMany()
                         .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ClimbingCompetition");

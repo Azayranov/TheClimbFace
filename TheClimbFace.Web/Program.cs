@@ -27,7 +27,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
         options.Password.RequireLowercase = false; // Allow passwords without lowercase letters
         options.Password.RequireNonAlphanumeric = false; // Allow passwords without special characters
     })
-    .AddRoles<IdentityRole<Guid>>() // Add support for roles
     .AddSignInManager<SignInManager<ApplicationUser>>() // Add SignInManager for login/logout
     .AddUserManager<UserManager<ApplicationUser>>() // Add UserManager for user management
     .AddEntityFrameworkStores<ApplicationDbContext>(); // Use CinemaDbContext for Identity
@@ -94,6 +93,14 @@ app.UseRouting();
 
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
+
+// Initialize database with seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    await DbInitializer.InitializeAsync(context, userManager);
+}
 
 // Configure default route for controllers
 app.MapControllerRoute(

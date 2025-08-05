@@ -111,8 +111,8 @@
                     <div class="col-md-4">
                         @if (Model.IsActive)
                         {
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#activeCompetitionModal"
-                               class="card action-card text-decoration-none h-100">
+                            <a href="#" class="card action-card text-decoration-none h-100 disabled" tabindex="-1" aria-disabled="true"
+                               style="pointer-events: none; opacity: 0.6;">
                                 <div class="card-body text-center">
                                     <i class="fas fa-edit fa-3x text-primary mb-3"></i>
                                     <h4 class="card-title">Edit Competition</h4>
@@ -134,14 +134,28 @@
                     </div>
 
                     <div class="col-md-4">
-                        <a asp-action="SetQuota" asp-route-id="@Model.Id"
-                           class="card action-card text-decoration-none h-100">
-                            <div class="card-body text-center">
-                                <i class="fas fa-users-cog fa-3x text-primary mb-3"></i>
-                                <h4 class="card-title">Set Quota for Groups</h4>
-                                <p class="text-muted">Manage group participation limits</p>
-                            </div>
-                        </a>
+                        @if (Model.IsActive)
+                        {
+                            <a asp-action="Stop" asp-route-idCompetition="@Model.Id"
+                               class="card action-card text-decoration-none h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-stop fa-3x text-danger mb-3"></i>
+                                    <h4 class="card-title">Stop Competition</h4>
+                                    <p class="text-muted">End the competition</p>
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Start" asp-route-idCompetition="@Model.Id"
+                               class="card action-card text-decoration-none h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-play fa-3x text-success mb-3"></i>
+                                    <h4 class="card-title">Start Competition</h4>
+                                    <p class="text-muted">Begin the competition</p>
+                                </div>
+                            </a>
+                        }
                     </div>
                 </div>
             }
@@ -149,30 +163,7 @@
     </div>
 </div>
 
-<!-- Modal for Active Competition -->
-<div class="modal fade" id="activeCompetitionModal" tabindex="-1" aria-labelledby="activeCompetitionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="activeCompetitionModalLabel">Active Competition</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    This competition is currently active. You need to stop it before making any changes.
-                </div>
-                <p>Would you like to stop the competition now?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a asp-action="Stop" asp-route-idCompetition="@Model?.Id" class="btn btn-danger">
-                    <i class="fas fa-stop"></i> Stop Competition
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <style>
     .info-group {
