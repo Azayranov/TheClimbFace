@@ -118,6 +118,9 @@
                         </div>
 
                         <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-secondary mb-2" onclick="generateRandomData()">
+                                <i class="fas fa-dice"></i> Generate Random Test Data
+                            </button>
                             <button type="submit" class="btn btn-primary">Create Competition</button>
                             <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
                         </div>
@@ -200,5 +203,125 @@
             updateStartDays();
             updateEndDays();
         });
+
+        function generateRandomData() {
+            // Български имена на състезания
+            const competitionNames = [
+                "Скален Фестивал София 2024",
+                "Весенни Скални Състезания",
+                "Летен Скален Чемпионат",
+                "Осенни Скални Игри",
+                "Зимен Скален Турнир",
+                "Национални Скални Състезания",
+                "Международен Скален Фестивал",
+                "Младежки Скални Състезания",
+                "Скални Игри на България",
+                "Скален Куб на България",
+                "Скални Състезания Пловдив",
+                "Скални Игри Варна",
+                "Скални Състезания Бургас",
+                "Скални Турнир Стара Загора",
+                "Скални Игри Русе",
+                "Скални Състезания Плевен"
+            ];
+
+            // Български организатори
+            const organizers = [
+                "Скален Клуб София",
+                "Алпинист София",
+                "Скален Клуб Пловдив",
+                "Вертикал Варна",
+                "Скален Клуб Бургас",
+                "Алпинист Стара Загора",
+                "Скален Клуб Русе",
+                "Вертикал Плевен",
+                "Скален Клуб Враца",
+                "Алпинист Шумен",
+                "Скален Клуб Сливен",
+                "Вертикал Ямбол",
+                "Скален Клуб Хасково",
+                "Алпинист Кърджали",
+                "Скален Клуб Смолян",
+                "Вертикал Благоевград",
+                "Българска Федерация по Алпинизъм",
+                "Скален Клуб България",
+                "Национален Скален Център"
+            ];
+
+            // Информация за състезанията
+            const competitionInfo = [
+                "Състезание по спортно катерене с различни категории и групи. Подходящо за всички възрасти и нива.",
+                "Традиционно скално състезание с международно участие. Включва различни дисциплини и категории.",
+                "Скални състезания за младежи и деца. Фокус върху безопасност и обучение.",
+                "Професионални скални състезания с награден фонд. Високо ниво на участниците.",
+                "Скални игри за любители и начинаещи. Приятна атмосфера и обучение.",
+                "Национални скални състезания с квалификации за международни турнири.",
+                "Скален фестивал с музика, храна и катерене. Семейно събитие.",
+                "Скални състезания за деца на възраст 7-18 години. Безопасност на първо място.",
+                "Международни скални състезания с участници от цяла Европа.",
+                "Скален турнир с различни категории и награди. Професионална организация."
+            ];
+
+            // Генериране на случайни данни
+            const randomName = competitionNames[Math.floor(Math.random() * competitionNames.length)];
+            const randomOrganizer = organizers[Math.floor(Math.random() * organizers.length)];
+            const randomInfo = competitionInfo[Math.floor(Math.random() * competitionInfo.length)];
+
+            // Генериране на случайни дати (състезание в следващите 6 месеца)
+            const currentDate = new Date();
+            const startDate = new Date(currentDate);
+            startDate.setDate(currentDate.getDate() + Math.floor(Math.random() * 180) + 30); // 1-6 месеца напред
+            
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + Math.floor(Math.random() * 7) + 1); // 1-7 дни след старта
+
+            // Попълване на полетата
+            document.getElementById('Name').value = randomName;
+            document.getElementById('Organizer').value = randomOrganizer;
+            document.getElementById('Information').value = randomInfo;
+
+            // Попълване на датите
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            // Start Date
+            document.getElementById('StartMonth').value = monthNames[startDate.getMonth()];
+            document.getElementById('StartYear').value = startDate.getFullYear();
+            updateStartDays();
+            setTimeout(() => {
+                document.getElementById('StartDay').value = startDate.getDate();
+            }, 100);
+
+            // End Date
+            document.getElementById('EndMonth').value = monthNames[endDate.getMonth()];
+            document.getElementById('EndYear').value = endDate.getFullYear();
+            updateEndDays();
+            setTimeout(() => {
+                document.getElementById('EndDay').value = endDate.getDate();
+            }, 200);
+
+            // Анимация за показване на генерираните данни
+            const form = document.querySelector('form');
+            form.style.transition = 'all 0.3s ease';
+            form.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                form.style.transform = 'scale(1)';
+            }, 300);
+
+            // Показване на съобщение
+            const button = document.querySelector('button[onclick="generateRandomData()"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Data Generated!';
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-secondary');
+            }, 2000);
+        }
     </script>
 }
