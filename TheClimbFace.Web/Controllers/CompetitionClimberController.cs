@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,46 @@ namespace TheClimbFace.Web.Controllers
 
             if (!competitionService.IsUserCreator(user!.Id, model.ApplicationUserId))
                 return RedirectToAction("Index", "Home");
+
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Index(CompetitionClimbersViewModel model)
+        {
+            if (!Guid.TryParse(model.CompetitionId, out Guid competitionId))
+                return RedirectToAction(nameof(Index));
+
+            int? GroupFilter = model.GroupFilter;
+            string? GenderFilter = model.GenderFilter;
+
+            model = await climberService.GetCompetitionClimbersAsync(competitionId);
+
+
+
+            List<CompetitionClimberViewModel> filteredClimbers = new();
+            bool IsFiltered = false;
+
+            if (GroupFilter != null && GenderFilter != null)
+            {
+                filteredClimbers = model.Climbers.Where(x => x.Gender.ToLower() == GenderFilter.ToLower()).Where(x => x.GroupNumber == GroupFilter).ToList();
+                IsFiltered = true;
+            }
+            else if (GroupFilter != null)
+            {
+                filteredClimbers = model.Climbers.Where(x => x.GroupNumber == GroupFilter).ToList();
+                IsFiltered = true;
+            }
+            else if (GenderFilter != null)
+            {
+                filteredClimbers = model.Climbers.Where(x => x.Gender.ToLower() == GenderFilter.ToLower()).ToList();
+                IsFiltered = true;
+            }
+            
+            if (IsFiltered)
+                model.Climbers = filteredClimbers;
+
+            model.GenderFilter = GenderFilter;
+            model.GroupFilter = GroupFilter;
 
             return View(model);
         }

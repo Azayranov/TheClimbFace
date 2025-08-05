@@ -82,8 +82,9 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     ClubName = c.Club.ClubName,
-                    GroupNumber = c.GroupNumber.ToString(),
-                    StartNumber = c.StartNumber
+                    GroupNumber = c.GroupNumber,
+                    StartNumber = c.StartNumber,
+                    Gender = c.Sex
                 };
                 climbersModel.Add(climber);
             }
@@ -95,7 +96,7 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
             CompetitionName = competition.Name,
             Climbers = climbersModel,
             IsActive = competition.IsActive,
-            ApplicationUserId = competition.ApplicationUserId
+            ApplicationUserId = competition.ApplicationUserId,
         };
 
         return model;

@@ -41,6 +41,45 @@
         </div>
 
         <div class="card-body">
+            <!-- Filters Section -->
+            <form method="post" asp-action="Index" class="mb-4">
+                <input type="hidden" name="CompetitionId" value="@Model?.CompetitionId" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="groupFilter" class="form-label">
+                            <i class="fas fa-layer-group me-1"></i> Filter by Group
+                        </label>
+                        <select id="groupFilter" name="groupFilter" class="form-select">
+                            <option value="">All Groups</option>
+                            <option value="1" selected="@(Model?.GroupFilter == 1)">Group 1</option>
+                            <option value="2" selected="@(Model?.GroupFilter == 2)">Group 2</option>
+                            <option value="3" selected="@(Model?.GroupFilter == 3)">Group 3</option>
+                            <option value="4" selected="@(Model?.GroupFilter == 4)">Group 4</option>
+                            <option value="5" selected="@(Model?.GroupFilter == 5)">Group 5</option>
+                            <option value="6" selected="@(Model?.GroupFilter == 6)">Group 6</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="genderFilter" class="form-label">
+                            <i class="fas fa-venus-mars me-1"></i> Filter by Gender
+                        </label>
+                        <select id="genderFilter" name="genderFilter" class="form-select">
+                            <option value="">All Genders</option>
+                            <option value="male" selected="@(Model?.GenderFilter == "male")">Male</option>
+                            <option value="female" selected="@(Model?.GenderFilter == "female")">Female</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 me-2">
+                            <i class="fas fa-filter me-1"></i> Apply Filters
+                        </button>
+                        <a href="@Url.Action("Index", new { idCompetition = Model?.CompetitionId })" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i> Clear
+                        </a>
+                    </div>
+                </div>
+            </form>
+
             @if (Model?.Climbers == null || !Model.Climbers.Any())
             {
                 <div class="text-center py-5">
@@ -68,7 +107,7 @@
                 <div class="climbers-list">
                     @foreach (var climber in Model.Climbers)
                     {
-                        <div class="climber-card mb-3">
+                        <div class="climber-card mb-3" data-gender="@(climber.Gender?.ToLower() ?? "none")" data-group="@(climber.GroupNumber)">
                             <div class="row align-items-center">
                                 <div class="col-auto">
                                     <div class="number-container">
@@ -92,7 +131,7 @@
                                             <i class="fas fa-building me-1"></i> Club: @(climber.ClubName ?? "No Club")
                                         </span>
                                         <span class="badge bg-secondary">
-                                            <i class="fas fa-layer-group me-1"></i> Group: @(climber.GroupNumber ?? "No Group")
+                                            <i class="fas fa-layer-group me-1"></i> Group: @(climber.GroupNumber)
                                         </span>
                                     </div>
                                 </div>
@@ -241,7 +280,57 @@
     .form-control-sm {
         width: 100px;
     }
-</style>
 
+    /* Filter styles */
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-select {
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    #clearFilters {
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    #clearFilters:hover {
+        background-color: #6c757d;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Filter section styling */
+    .row.mb-4 {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+    }
+
+    /* Animation for filter changes */
+    .climber-card {
+        transition: all 0.3s ease;
+    }
+
+    /* No results message styling */
+    #noResultsMessage .empty-state {
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        padding: 2rem;
+        border: 1px solid #e9ecef;
+    }
+</style>
 @section Scripts {
 }
+
