@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using TheClimbFace.Data.Models;
 using TheClimbFace.Data.Repository.Interfaces;
@@ -37,19 +38,15 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
     {
         ClimbingCompetition? competition = await competitionRepository
             .GetAllAttached()
-            .Where(x => x.Id == competitionId)
-            .Include(c => c.Climbers)
-            .Include(cl => cl.Clubs)
-            .Include(cb => cb.ClimbersBouldersQualifications)
-            .Include(b => b.Boulders)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(x => x.Id == competitionId);
 
-        await boulderRepository.DeleteRangeAsync(competition!.Boulders.ToList());
-        await climbersBouldersRepository.DeleteRangeAsync(competition!.ClimbersBouldersQualifications.ToList());
-        await climberRepository.DeleteRangeAsync(competition!.Climbers.ToList());
-        await clubRepository.DeleteRangeAsync(competition!.Clubs.ToList());
+        if (competition != null)
+        {
+            competition.IsDeleted = true;
+            competition.IsActive = false;
+        }
 
-        await competitionRepository.DeleteAsync(competitionId);
+        await competitionRepository.SaveChangesAsync();
     }
 
     public async Task EditCompetitionAsync(CreateCompetitionInputModel model, DateTime startDate, DateTime endDate, Guid competitionId)
@@ -141,13 +138,13 @@ public class CompetitionService(IRepository<ClimbingCompetition> competitionRepo
     {
 
         List<ClimbingCompetition> competitions = await competitionRepository.GetAllAttached()
-            .Where(x => x.Arbitrators.Any(x => x.User.Id == userId))
+            .Where(x => x.Arbitrators.Any(x => x.User.Id == userId) && x.IsDeleted == false)
             .Include(x => x.Arbitrators)
             .ThenInclude(x => x.User)
             .ToListAsync();
 
         IEnumerable<ClimbingCompetition> userCompetitions = competitionRepository.GetAllAttached()
-            .Where(x => x.ApplicationUserId == userId)
+            .Where(x => x.ApplicationUserId == userId && x.IsDeleted == false)
             .ToList();
 
         var activeCompetitions = new List<CompetitionViewModel>();
