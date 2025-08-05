@@ -172,7 +172,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a asp-action="Stop" asp-route-idCompetition="@Model?.CompetitionId" class="btn btn-danger">
+                <a asp-action="Stop" asp-controller="Competition" asp-route-idCompetition="@Model?.CompetitionId" class="btn btn-danger">
                     <i class="fas fa-stop"></i> Stop Competition
                 </a>
             </div>
