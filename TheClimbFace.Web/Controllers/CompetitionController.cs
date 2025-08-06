@@ -95,7 +95,7 @@ namespace TheClimbFace.Web.Controllers
 
             await competitionService.EditCompetitionAsync(model, StartDate, EndDate, competitionId);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { Id = model.Id });
         }
 
         [HttpPost]

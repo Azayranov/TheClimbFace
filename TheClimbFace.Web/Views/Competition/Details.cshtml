@@ -57,16 +57,33 @@
 
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <a asp-action="Index" asp-controller="CompetitionClimber" asp-route-id="@Model.Id" 
-                           class="card action-card text-decoration-none h-100">
-                            <div class="card-body text-center">
-                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                                <h4 class="card-title">Climbers</h4>
-                                <div class="counter-badge">
-                                    @(Model.ClimbersCount)
+                        @if (Model.IsActive)
+                        {
+                            <a href="#" class="card action-card text-decoration-none h-100 disabled" tabindex="-1" aria-disabled="true"
+                               style="pointer-events: none; opacity: 0.6;">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                    <h4 class="card-title">Climbers</h4>
+                                    <div class="counter-badge">
+                                        @(Model.ClimbersCount)
+                                    </div>
+                                    <p class="text-muted">Competition must be stopped first</p>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" asp-controller="CompetitionClimber" asp-route-id="@Model.Id" 
+                               class="card action-card text-decoration-none h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                    <h4 class="card-title">Climbers</h4>
+                                    <div class="counter-badge">
+                                        @(Model.ClimbersCount)
+                                    </div>
+                                </div>
+                            </a>
+                        }
                     </div>
 
                     <div class="col-md-4">
