@@ -18,24 +18,25 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
             .ThenInclude(c => c.Club)
             .FirstOrDefaultAsync();
 
-        //climber age
-#warning make it a method
-        int climberAge = DateTime.Now.Year - birthDate.Year;
 
-        //climber group
-#warning make it a method
+        int climberAge = GetClimberAge(birthDate);
 
-        int climberGroup = 0;
 
-        if (climberAge >= 7 && climberAge <= 20)
-            climberGroup = (climberAge - 7) / 2 + 1;
+        int climberGroup = GetClimberGroup(climberAge);
 
-        //climber ClubId
-#warning make it a method
-
-        Club club = new();
         Climber climber;
 
+        Club club;
+        GetClub(model, birthDate, competition, climberAge, climberGroup, out climber, out club);
+
+        competition.Clubs.Add(club);
+        competition.Climbers.Add(climber);
+        await competitionRepository.SaveChangesAsync();
+    }
+
+    private static void GetClub(AddClimberInputModel model, DateTime birthDate, ClimbingCompetition competition, int climberAge, int climberGroup, out Climber climber, out Club club)
+    {
+        club = new();
         if (competition!.Clubs.FirstOrDefault(x => x.ClubName == model.ClubName) != null)
             club = competition.Clubs.First(n => n.ClubName == model.ClubName);
         else
@@ -47,10 +48,20 @@ public class ClimberService(IRepository<ClimbingCompetition> competitionReposito
         }
 
         climber = model.ToClimber(club, birthDate, climberAge, climberGroup);
+    }
 
-        competition.Clubs.Add(club);
-        competition.Climbers.Add(climber);
-        await competitionRepository.SaveChangesAsync();
+    private static int GetClimberGroup(int climberAge)
+    {
+        int climberGroup = 0;
+
+        if (climberAge >= 7 && climberAge <= 20)
+            climberGroup = (climberAge - 7) / 2 + 1;
+        return climberGroup;
+    }
+
+    private static int GetClimberAge(DateTime birthDate)
+    {
+        return DateTime.Now.Year - birthDate.Year;
     }
 
     public async Task DeleteClimberAsync(Guid climberId)
